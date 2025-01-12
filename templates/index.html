@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{%block body%}
+    <form action="/mode" method="get">
+        <input type="submit" value="Play">
+    </form>
+
+    <form action="/highscore" method="post">
+        <input type="submit" value="Highscore">
+    </form>
+{%endblock%}

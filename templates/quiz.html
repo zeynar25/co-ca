@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Guess the {{ mode }} of {{category}}</title>
+</head>
+
+<body>
+    
+    <form action="/submit" method="POST">   
+        {% for question in questions %}
+            {% if mode == "capitals" %}
+                <p>What is the capital of {{ question.name }}?</p>
+            {% else %}
+                <p>{{ question.capital }} is the capital of what city?</p>
+            {% endif %}
+            
+            {% for option in question.options %}
+                <input type="radio" 
+                    id="question{{ loop.index0 }}_option{{ loop.index }}" 
+                    name="question{{ loop.index0 }}" 
+                    value="{{ option }}">
+                <label for="question{{ loop.index0 }}_option{{ loop.index }}">{{ option }}</label><br>
+            {% endfor %}
+        {% endfor %}
+        
+        <button type="submit">Submit</button>
+    </form>
+</body>
+
+</html>
