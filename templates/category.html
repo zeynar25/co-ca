@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{%block head%}
+    <title>Co-Ca</title>
+{%endblock%}
+
 {%block body%}
     <form action="/category" method="POST">
         <button type="submit" name="category" value="all">All</button>

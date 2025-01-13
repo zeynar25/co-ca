@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{%block head%}
+    <title>Guess the {{ mode }} of {{ category }}</title>
+    <style>
+        .correct {
+            background-color: green;
+            color: white;
+        }
+        .incorrect {
+            background-color: red;
+            color: white;
+        }
+        
+        .neutral {
+            background-color: black;
+            color: white;
+        }
+    </style>
+{%endblock%}
+
+{%block body%}
+    <h1>Congratulations! You scored {{ score }} out of 8</h1>
+    {% for question in questions %}
+        {% if mode == "capitals" %}
+            <p>What is the capital of {{ question.name }}?</p>
+        {% else %}
+            <p>{{ question.capital }} is the capital of what city?</p>
+        {% endif %}
+        
+        <ul>
+            <!-- 
+                if class = "correct", color it green else if "incorrect" red tas gray pag "neither"
+                kayo na bahala mag isip kulay, basta dapat 
+            -->
+            {% for option in question.options %}
+                <li class="{% if option == question.correct_answer %}correct
+                            {% elif option == question.user_answer %}incorrect
+                            {% else %}neither
+                            {% endif %}">
+                            {{ option }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+    <div>
+        <form action="/highscore" method="POST">   
+            <label for="username">Username: </label>
+            <input type="text" name="username" id="username" value="Unknown">
+            <input type="hidden" name="score" value="{{ score }}">
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+{%endblock%}

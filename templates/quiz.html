@@ -1,13 +1,10 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html>
+{%block head%}
+    <title>Guess the {{ mode }} of {{ category }}</title>
+{%endblock%}
 
-<head>
-    <title>Guess the {{ mode }} of {{category}}</title>
-</head>
-
-<body>
-    
+{%block body%}
     <form action="/submit" method="POST">   
         {% for question in questions %}
             {% if mode == "capitals" %}
@@ -18,15 +15,13 @@
             
             {% for option in question.options %}
                 <input type="radio" 
-                    id="question{{ loop.index0 }}_option{{ loop.index }}" 
-                    name="question{{ loop.index0 }}" 
+                    id="question.id_option{{ loop.index }}" 
+                    name="{{ question.id }}" 
                     value="{{ option }}">
-                <label for="question{{ loop.index0 }}_option{{ loop.index }}">{{ option }}</label><br>
+                <label for="question.id_option{{ loop.index }}">{{ option }}</label><br>
             {% endfor %}
         {% endfor %}
         
         <button type="submit">Submit</button>
     </form>
-</body>
-
-</html>
+{%endblock%}

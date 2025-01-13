@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{%block head%}
+    <title>Top 10 players in {{ filter }} Category</title>
+{%endblock%}
+    
+{%block body%}
+    <ul>
+        {% for player in players %}
+            <li>
+                {{ player.username }} - {{ player.score }}
+            </li>
+        {% endfor %}
+    </ul>
+{%endblock%}

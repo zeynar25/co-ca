@@ -1,9 +1,21 @@
 class Country:
-    def __init__(self, name, capital, continent):
+    def __init__(self, id, name, capital, continent):
+        self.__id = id
         self.__name = name
         self.__capital = capital
         self.__continent = continent
 
+    @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self, id):
+        if isinstance(id, int):
+            self.__id = id
+        else:
+            raise ValueError("Invalid ID")
+        
     @property
     def name(self):
         return self.__name
