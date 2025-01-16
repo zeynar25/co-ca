@@ -1,7 +1,20 @@
-# To do
-# 1. Implement filter in highscore (for Nate)
-# 2. Implement queries (for Team SQL)
-# 3. Design with CSS (for Team Frontend)
+# To do (For Nate)
+
+# - modify classes
+#   - add question form attribute for question.py
+#   - add subclasses to question.py (multchoice, trueorfalse, identification?)
+
+# - make quiz() more efficient
+
+# - Implement difficulty in quiz 
+# - Implement filter in highscore 
+
+# - Connect to database 
+# - Implement queries 
+
+
+# To do (For team Frontend)
+# - Mananakal ako pag hindi pa sinimulan HTML+CSS
 
 from flask import Flask, redirect, render_template, request, session
 import random
@@ -23,25 +36,20 @@ def index():
 
 
 # Render guess the capital or country questions.
-@app.route("/mode", methods=["GET", "POST"])
-def mode():
+@app.route("/customize", methods=["GET", "POST"])
+def customize():
     if request.method == "POST":
         selected_mode = request.form.get("mode")
-        session['mode'] = selected_mode
-        return redirect("/category")
-    
-    return render_template("mode.html")
-
-
-# Render all and continents buttons.
-@app.route("/category", methods=["GET", "POST"])
-def category():
-    if request.method == "POST":
         selected_categ = request.form.get("category")
+        selected_difficulty = request.form.get("difficulty")
+
         session['category'] = selected_categ
+        session['mode'] = selected_mode
+        session['difficulty'] = selected_difficulty
+
         return redirect("/quiz")
     
-    return render_template("category.html")
+    return render_template("customize.html")
 
 
 # Generate the quiz based on mode and category

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{%block head%}
+    <title>Customize your quiz</title>
+{%endblock%}
+
+{%block body%}
+    <form action="/customize" method="POST">
+        <label id = "mode">Guess the... </label>
+        <input type="radio" name="mode" id="mode" required>Capital
+        <input type="radio" name="mode" id="mode" required>Country
+        
+        <br>
+
+        <label id = "mode">Category:</label>
+        <input type="radio" name="category" id="category" required>Earth
+        <input type="radio" name="category" id="category" required>Asia
+        <input type="radio" name="category" id="category" required>Africa
+        <input type="radio" name="category" id="category" required>North America
+        <input type="radio" name="category" id="category" required>South America
+        <input type="radio" name="category" id="category" required>Europe
+        <input type="radio" name="category" id="category" required>Australia
+        
+        <br>
+        
+        <label id = "mode">Type:</label>
+        <input type="radio" name="difficulty" id="difficulty" required>True or False
+        <input type="radio" name="difficulty" id="difficulty" required>Multiple Choice
+        <input type="radio" name="difficulty" id="difficulty" required>Identification
+
+        <br>
+
+        <input type="submit" value="Create quiz">
+    </form>
+{%endblock%}

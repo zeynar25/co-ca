@@ -48,7 +48,7 @@ class Country:
             raise ValueError("Continent name must be a non-empty string")
     
         continent = continent.capitalize()
-        continents = ["Asia", "Europe", "North america", "South america", "Africa", "Australia"]
+        continents = ["Asia", "Europe", "North America", "South America", "Africa", "Australia"]
 
         if continent in continents:
             self.__continent = continent
