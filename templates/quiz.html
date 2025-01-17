@@ -7,19 +7,19 @@
 {%block body%}
     <form action="/submit" method="POST">   
         {% for question in questions %}
-            {% if mode == "capitals" %}
-                <p>What is the capital of {{ question.name }}?</p>
-            {% else %}
-                <p>{{ question.capital }} is the capital of what city?</p>
-            {% endif %}
+            <p>{{ question.desc }}</p>
             
-            {% for option in question.options %}
-                <input type="radio" 
-                    id="question.id_option{{ loop.index }}" 
-                    name="{{ question.id }}" 
-                    value="{{ option }}">
-                <label for="question.id_option{{ loop.index }}">{{ option }}</label><br>
-            {% endfor %}
+            {% if difficulty == "multiple-choice" %}
+                {% for option in question.options %}
+                    <input type="radio" 
+                        id="question.id_option{{ loop.index }}" 
+                        name="{{ question.id }}" 
+                        value="{{ option }}">
+                    <label for="question.id_option{{ loop.index }}">{{ option }}</label><br>
+                {% endfor %}
+            {% endif %}
+
+            
         {% endfor %}
         
         <button type="submit">Submit</button>

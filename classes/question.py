@@ -1,42 +1,42 @@
 from classes.country import Country
 
 class Question(Country):
-    def __init__(self, id, name, capital, continent, options=None):
+    def __init__(self, id, name, capital, continent, desc, answer_key):
         super().__init__(id, name, capital, continent)
-        self.__options = options if options else []
-        self.__user_answer = None
-        self.__correct_answer = None
-
-    @property
-    def options(self):
-        return self.__options
-
-    @options.setter
-    def options(self, options):
-        if isinstance(options, list):
-            self.__options = options
-        else:
-            raise ValueError("Options must be a list")
-
-    @property
-    def user_answer(self):
-        return self.__user_answer
-
-    @user_answer.setter
-    def user_answer(self, answer):
-        if isinstance(answer, str):
-            self.__user_answer = answer
-        else:
-            raise ValueError("answer must be a string")
+        self.__desc = desc
+        self.__answer_key = answer_key
+        self.__answer = None
             
     @property
-    def correct_answer(self):
-        return self.__correct_answer
+    def desc(self):
+        return self.__desc
 
-    @correct_answer.setter
+    @desc.setter
+    def desc(self, desc):
+        if isinstance(desc, str):
+            self.__desc = desc
+        else:
+            raise ValueError("description must be a string")
+        
+    @property
+    def answer_key(self):
+        return self.__answer_key
+
+    @answer_key.setter
     def correct_answer(self, answer):
         if isinstance(answer, str):
-            self.__correct_answer = answer
+            self.__answer_key = answer
+        else:
+            raise ValueError("answer must be a string")
+
+    @property
+    def answer(self):
+        return self.__answer
+
+    @answer.setter
+    def answer(self, answer):
+        if isinstance(answer, str):
+            self.__answer = answer
         else:
             raise ValueError("answer must be a string")
 
@@ -49,13 +49,4 @@ class Question(Country):
 
     def __str__(self):
         base_info = super().__str__()
-        return f"{base_info}, Options: {', '.join(self.__options)}"
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            'name': self.name,
-            'capital': self.capital,
-            'continent': self.continent,
-            'options': self.__options
-        }
+        return f"{base_info}, Question: {self.__desc}, Answer Key: {self.__answer_key}"

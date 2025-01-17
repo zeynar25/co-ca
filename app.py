@@ -1,26 +1,27 @@
 # To do (For Nate)
-
 # - modify classes
-#   - add question form attribute for question.py
-#   - add subclasses to question.py (multchoice, trueorfalse, identification?)
+#   - add subclasses to question.py (trueorfalse, identification?)
 
-# - make quiz() more efficient
-
-# - Implement difficulty in quiz 
-# - Implement filter in highscore 
-
-# - Connect to database 
-# - Implement queries 
-
+# - Implement trueorfalse and identification difficulty in quiz 
+# - Implement highscore 
+#     - connect highscore to database
+#     - create table for highscore = id username difficulty datetime points
+#     - add filter for difficulty and datetime (this week, this month, this year ganon)
 
 # To do (For team Frontend)
 # - Mananakal ako pag hindi pa sinimulan HTML+CSS
 
+# To do (For team database)
+# - Palagyan na laman countries sa Africa
+
 from flask import Flask, redirect, render_template, request, session
+
 import random
+import sqlite3
 
 from classes.country import Country
 from classes.question import Question
+from classes.multiple_choice import MultipleChoice
 
 
 app = Flask(__name__)
@@ -43,14 +44,40 @@ def customize():
         selected_categ = request.form.get("category")
         selected_difficulty = request.form.get("difficulty")
 
-        session['category'] = selected_categ
         session['mode'] = selected_mode
+        session['category'] = selected_categ
         session['difficulty'] = selected_difficulty
 
         return redirect("/quiz")
     
     return render_template("customize.html")
 
+def get_countries_by_category(category):
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+
+    if category == "Earth":
+        query = cursor.execute('select id, country, capital, continent from countries')
+    else:
+        query = cursor.execute('select id, country, capital, continent from countries where continent = ?', (category,))
+
+    result = query.fetchall()
+
+    connection.commit()
+    connection.close()
+
+    return [Country(*row) for row in result]
+
+def add_options(question, countries, attribute):
+    options = set()
+    options.add(getattr(question, attribute))
+
+    while len(options) < 4:
+        random_country = random.choice(countries)
+        options.add(getattr(random_country, attribute))
+    
+    question.options = list(options)
+    random.shuffle(question.options)
 
 # Generate the quiz based on mode and category
 @app.route("/quiz", methods=["GET"])
@@ -58,80 +85,44 @@ def quiz():
     # Retrieve values from session.
     mode = session.get('mode')  
     category = session.get('category') 
+    difficulty = session.get('difficulty') 
 
     questions = []
+    countries = get_countries_by_category(category)
+    
+    # Generate 10 questions
+    random.shuffle(countries)
+    for i in range(10): 
+        if difficulty == "multiple-choice":
+            if mode == "name":
+                desc = f"{countries[i].capital} is the capital of which city?"
+                question = MultipleChoice(
+                    countries[i].id, 
+                    countries[i].name, 
+                    countries[i].capital, 
+                    countries[i].continent, 
+                    desc, 
+                    countries[i].name
+                )
+            else:
+                desc = f"What is the capital of {countries[i].name}?"
+                question = MultipleChoice(
+                    countries[i].id, 
+                    countries[i].name, 
+                    countries[i].capital, 
+                    countries[i].continent, 
+                    desc, 
+                    countries[i].capital)
+        
+            add_options(question, countries, mode)
 
-    # Change this part SQL team, retrive niyo entries where continent = category;
-    # Lagyan niyo ng condition na if category == "all", wala ng where clause.
-    # tas convert niyo to a list of Country objects.
-    ph = Country(1,"Philippines", "Manila", "Asia")
-    jp = Country(2, "Japan", "Tokyo", "Asia")
-    sk = Country(3, "South Korea", "Seoul", "Asia")
-    nk = Country(4, "North Korea", "Pyeongyang", "Asia")
-    ch = Country(5, "China", "Beijing", "Asia")
-    rs = Country(6, "Russia", "Moscow", "Asia")
-    nd = Country(7, "India", "Delhi", "Asia")
-    ml = Country(8, "Malaysia", "Kuala Lumpur", "Asia")
-    countries = [ph, jp, sk, nk, ch, rs, nd, ml]
-
-    # Generate 8 questions.
-    # Replace with 10 once program is connected to database.
-    while len(questions) < 8:
-        curr = random.choice(countries)
-
-        # Check if curr already exist as a question
-        skip = False
-        for q in questions :
-            if q.name == curr.name:
-                skip = True
-                break
-
-        if skip:
-            continue
-
-        question = Question(curr.id, curr.name, curr.capital, curr.continent)
-
-        if mode == "capitals":
-            question.add_option(curr.capital)
-            while len(question.options) < 4:
-                curr2 = random.choice(countries)
-
-                # Skip when curr2.capital already exist in option.
-                skip2 = False
-                for option in question.options :
-                    if option == curr2.capital:
-                        skip2 = True
-                        break
-
-                if skip2:
-                    continue
-                else:
-                    question.add_option(curr2.capital)
-
-        else:
-            question.add_option(curr.name)
-            while len(question.options) < 4:
-                curr2 = random.choice(countries)
-
-                # Skip when curr2.capital already exist in option.
-                skip2 = False
-                for option in question.options :
-                    if option == curr2.name:
-                        skip2 = True
-                        break
-
-                if skip2:
-                    continue
-                else:
-                    question.add_option(curr2.name)
-
-        random.shuffle(question.options)
         questions.append(question)
 
     # Convert questions to a list of dictionaries
     session['questions'] = [q.to_dict() for q in questions]
+    print(session['questions'])
 
-    return render_template('quiz.html', mode=mode, category=category, questions=questions)
+    return render_template('quiz.html', mode=mode, category=category, difficulty=difficulty, questions=questions)
 
 
 # Check the quiz, and upload the score to highscore db.
@@ -140,25 +131,29 @@ def quiz():
 @app.route("/submit", methods=["POST"])
 def check():
     mode = session.get('mode')  
+    difficulty = session.get('difficulty') 
     questions_data = session.get('questions')
 
     score = 0
 
-    # Convert session questions back to a list of Question object.
-    questions = [Question(**q) for q in questions_data]
+    if difficulty == "multiple-choice":
+        # Convert session questions back to a list of Question object.
+        questions = [MultipleChoice(
+            id=q['id'], 
+            name=q['name'], 
+            capital=q['capital'], 
+            continent=q['continent'], 
+            desc=q['desc'], 
+            answer_key=q['answer_key'], 
+            options=q['options']
+        ) for q in questions_data]
 
-    # replace 8 with 10 later on
-    for i in range(8):
-        answer = request.form.get(str(questions[i].id)) or "None"
-        questions[i].user_answer = answer
+        for i in range(10):
+            answer = request.form.get(str(questions[i].id)) or "None"
+            questions[i].answer = answer
 
-        if mode == "capitals":
-            questions[i].correct_answer = questions[i].capital
-        else:
-            questions[i].correct_answer = questions[i].name
-
-        if (answer == questions[i].correct_answer):
-            score += 1
+            if (answer == questions[i].answer_key):
+                score += 1
 
     return render_template("score.html", score=score, questions=questions)
 

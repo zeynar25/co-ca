@@ -20,22 +20,19 @@
 {%endblock%}
 
 {%block body%}
-    <h1>Congratulations! You scored {{ score }} out of 8</h1>
+    <h1>Congratulations! You got {{ score }} items correct</h1>
     {% for question in questions %}
-        {% if mode == "capitals" %}
-            <p>What is the capital of {{ question.name }}?</p>
-        {% else %}
-            <p>{{ question.capital }} is the capital of what city?</p>
-        {% endif %}
+        <p>{{ question.desc }}?</p>
         
         <ul>
             <!-- 
-                if class = "correct", color it green else if "incorrect" red tas gray pag "neither"
-                kayo na bahala mag isip kulay, basta dapat 
+                basta ginawa ko naka 'correct' class yung mga tamang sagot
+                'incorrect' class pag sinagot pero mali or walang sinagot
+                'neither' class pag wala lang, salingkitkit
             -->
             {% for option in question.options %}
-                <li class="{% if option == question.correct_answer %}correct
-                            {% elif option == question.user_answer %}incorrect
+                <li class="{% if (option == question.answer and option != question.answer_key) or (question.answer == 'None' and option == question.answer_key) %}incorrect
+                            {% elif option == question.answer_key %}correct
                             {% else %}neither
                             {% endif %}">
                             {{ option }}

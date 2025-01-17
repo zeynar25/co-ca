@@ -7,26 +7,26 @@
 {%block body%}
     <form action="/customize" method="POST">
         <label id = "mode">Guess the... </label>
-        <input type="radio" name="mode" id="mode" required>Capital
-        <input type="radio" name="mode" id="mode" required>Country
+        <input type="radio" name="mode" id="mode-capital" value="capital" required>Capital
+        <input type="radio" name="mode" id="mode-country" value="name" required>Country
         
         <br>
 
         <label id = "mode">Category:</label>
-        <input type="radio" name="category" id="category" required>Earth
-        <input type="radio" name="category" id="category" required>Asia
-        <input type="radio" name="category" id="category" required>Africa
-        <input type="radio" name="category" id="category" required>North America
-        <input type="radio" name="category" id="category" required>South America
-        <input type="radio" name="category" id="category" required>Europe
-        <input type="radio" name="category" id="category" required>Australia
+        <input type="radio" name="category" id="category-earth" value="Earth" required>Earth
+        <input type="radio" name="category" id="category-asia" value="Asia" required>Asia
+        <input type="radio" name="category" id="category-africa" value="Africa" required>Africa
+        <input type="radio" name="category" id="category-north-america" value="North America" required>North America
+        <input type="radio" name="category" id="category-south-america" value="South America" required>South America
+        <input type="radio" name="category" id="category-europe" value="Europe" required>Europe
+        <input type="radio" name="category" id="category-australia" value="Australia" required>Australia
         
         <br>
         
         <label id = "mode">Type:</label>
-        <input type="radio" name="difficulty" id="difficulty" required>True or False
-        <input type="radio" name="difficulty" id="difficulty" required>Multiple Choice
-        <input type="radio" name="difficulty" id="difficulty" required>Identification
+        <input type="radio" name="difficulty" id="difficulty-tf" value="true-false" required>True or False
+        <input type="radio" name="difficulty" id="difficulty-mc" value="multiple-choice" required>Multiple Choice
+        <input type="radio" name="difficulty" id="difficulty-id" value="identification" required>Identification
 
         <br>
 
