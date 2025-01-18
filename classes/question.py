@@ -1,22 +1,22 @@
 from classes.country import Country
 
 class Question(Country):
-    def __init__(self, id, name, capital, continent, desc, answer_key):
+    def __init__(self, id, name, capital, continent, question, answer_key):
         super().__init__(id, name, capital, continent)
-        self.__desc = desc
+        self.__question = question
         self.__answer_key = answer_key
         self.__answer = None
             
     @property
-    def desc(self):
-        return self.__desc
+    def question(self):
+        return self.__question
 
-    @desc.setter
-    def desc(self, desc):
-        if isinstance(desc, str):
-            self.__desc = desc
+    @question.setter
+    def question(self, question):
+        if isinstance(question, str):
+            self.__question = question
         else:
-            raise ValueError("description must be a string")
+            raise ValueError("question must be a string")
         
     @property
     def answer_key(self):
@@ -50,3 +50,14 @@ class Question(Country):
     def __str__(self):
         base_info = super().__str__()
         return f"{base_info}, Question: {self.__desc}, Answer Key: {self.__answer_key}"
+    
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            'name': self.name,
+            'capital': self.capital,
+            'continent': self.continent,
+            'question': self.__question,
+            'answer_key': self.__answer_key
+        }

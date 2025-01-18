@@ -1,8 +1,10 @@
+import random
+
 from classes.question import Question
 
 class MultipleChoice(Question):
-    def __init__(self, id, name, capital, continent, desc, answer_key, options=None):
-        super().__init__(id, name, capital, continent, desc, answer_key)
+    def __init__(self, id, name, capital, continent, question, answer_key, options=None):
+        super().__init__(id, name, capital, continent, question, answer_key)
         self.__options = options if options else []
 
     @property
@@ -16,12 +18,16 @@ class MultipleChoice(Question):
         else:
             raise ValueError("Options must be a list")
 
-    def add_option(self, option):
-        """Add an option to the question."""
-        if isinstance(option, str) and option.strip():
-            self.__options.append(option)
-        else:
-            raise ValueError("Option must be a non-empty string")
+    def add_options(self, countries, attribute):
+        options = set()
+        options.add(getattr(self, attribute))
+
+        while len(options) < 4:
+            random_country = random.choice(countries)
+            options.add(getattr(random_country, attribute))
+        
+        self.__options = list(options)
+        random.shuffle(self.__options)
 
     def __str__(self):
         base_info = super().__str__()
@@ -33,7 +39,7 @@ class MultipleChoice(Question):
             'name': self.name,
             'capital': self.capital,
             'continent': self.continent,
-            'desc': self.desc,
+            'question': self.question,
             'answer_key': self.answer_key,
             'options': self.__options
         }

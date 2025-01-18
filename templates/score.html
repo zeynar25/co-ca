@@ -20,9 +20,9 @@
 {%endblock%}
 
 {%block body%}
-    <h1>Congratulations! You got {{ score }} items correct</h1>
+    <h1>Congratulations! You got {{ score }} items correct out of 10</h1>
     {% for question in questions %}
-        <p>{{ question.desc }}?</p>
+        <p>{{ question.question }}</p>
         
         <ul>
             <!-- 
@@ -30,14 +30,27 @@
                 'incorrect' class pag sinagot pero mali or walang sinagot
                 'neither' class pag wala lang, salingkitkit
             -->
-            {% for option in question.options %}
-                <li class="{% if (option == question.answer and option != question.answer_key) or (question.answer == 'None' and option == question.answer_key) %}incorrect
-                            {% elif option == question.answer_key %}correct
-                            {% else %}neither
-                            {% endif %}">
-                            {{ option }}
+
+            {% if difficulty == "identification" %}
+                <li class="{% if question.answer == question.answer_key %}correct
+                    {% else %}incorrect
+                    {% endif %}">
+                    {{ question.answer }}
                 </li>
-            {% endfor %}
+                {% if question.answer != question.answer_key %}
+                    <li>The correct answer is {{question.answer_key}}.</li>
+                {% endif %}
+
+            {% else %}
+                {% for option in question.options %}
+                        <li class="{% if (option == question.answer and option != question.answer_key) or (question.answer == 'None' and option == question.answer_key) %}incorrect
+                        {% elif option == question.answer_key %}correct
+                        {% else %}neither
+                        {% endif %}">
+                        {{ option }}
+                    </li>
+                {% endfor %}
+            {% endif %}
         </ul>
     {% endfor %}
 

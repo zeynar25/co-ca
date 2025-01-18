@@ -7,9 +7,11 @@
 {%block body%}
     <form action="/submit" method="POST">   
         {% for question in questions %}
-            <p>{{ question.desc }}</p>
+            <p>{{ question.question }}</p>
             
-            {% if difficulty == "multiple-choice" %}
+            {% if difficulty == "identification" %}
+                <input type="text" name="{{ question.id }}" id="{{ question.id }}"><br>
+            {% else %}
                 {% for option in question.options %}
                     <input type="radio" 
                         id="question.id_option{{ loop.index }}" 

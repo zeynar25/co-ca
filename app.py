@@ -22,6 +22,7 @@ import sqlite3
 from classes.country import Country
 from classes.question import Question
 from classes.multiple_choice import MultipleChoice
+from classes.true_false import TrueFalse
 
 
 app = Flask(__name__)
@@ -68,17 +69,6 @@ def get_countries_by_category(category):
 
     return [Country(*row) for row in result]
 
-def add_options(question, countries, attribute):
-    options = set()
-    options.add(getattr(question, attribute))
-
-    while len(options) < 4:
-        random_country = random.choice(countries)
-        options.add(getattr(random_country, attribute))
-    
-    question.options = list(options)
-    random.shuffle(question.options)
-
 # Generate the quiz based on mode and category
 @app.route("/quiz", methods=["GET"])
 def quiz():
@@ -90,72 +80,137 @@ def quiz():
     questions = []
     countries = get_countries_by_category(category)
     
-    # Generate 10 questions
     random.shuffle(countries)
+
+    # First ten countries in the list will serve as the questions.
     for i in range(10): 
-        if difficulty == "multiple-choice":
+        if difficulty == "true-false":
+            choices = ["True", "False"]
+            answer = random.choice(choices)
+
             if mode == "name":
-                desc = f"{countries[i].capital} is the capital of which city?"
-                question = MultipleChoice(
-                    countries[i].id, 
-                    countries[i].name, 
-                    countries[i].capital, 
-                    countries[i].continent, 
-                    desc, 
-                    countries[i].name
-                )
+                country_used = countries[i].name
+
+                if answer == "False":
+                    while (country_used == countries[i].name):
+                        country_used = random.choice(countries).name
+
+                description = f"{countries[i].capital} is the capital city of {country_used}."
             else:
-                desc = f"What is the capital of {countries[i].name}?"
-                question = MultipleChoice(
-                    countries[i].id, 
-                    countries[i].name, 
-                    countries[i].capital, 
-                    countries[i].continent, 
-                    desc, 
-                    countries[i].capital)
+                capital_used = countries[i].capital
+
+                if answer == "False":
+                    while (capital_used == countries[i].capital):
+                        capital_used = random.choice(countries).capital
+
+                description = f"{capital_used} is the capital city of {countries[i].name}."
+            
+            question = TrueFalse(
+                countries[i].id, 
+                countries[i].name, 
+                countries[i].capital, 
+                countries[i].continent, 
+                description, 
+                answer
+            )
+
+        elif difficulty == "multiple-choice":
+            answer_key = None
+
+            if mode == "name":
+                description = f"{countries[i].capital} is the capital of which city?"
+                answer_key = countries[i].name
+            else:
+                description = f"What is the capital of {countries[i].name}?"
+                answer_key = countries[i].capital
+            
+            question = MultipleChoice(
+                countries[i].id, 
+                countries[i].name, 
+                countries[i].capital, 
+                countries[i].continent, 
+                description, 
+                answer_key
+            )
         
-            add_options(question, countries, mode)
+            question.add_options(countries, mode)
+
+        else:
+            answer_key = None
+
+            if mode == "name":
+                description = f"{countries[i].capital} is the capital of which city?"
+                answer_key = countries[i].name
+            else:
+                description = f"What is the capital of {countries[i].name}?"
+                answer_key = countries[i].capital
+            
+            question = Question(
+                countries[i].id, 
+                countries[i].name, 
+                countries[i].capital, 
+                countries[i].continent, 
+                description, 
+                answer_key
+            )
 
         questions.append(question)
 
     # Convert questions to a list of dictionaries
     session['questions'] = [q.to_dict() for q in questions]
-    print(session['questions'])
 
     return render_template('quiz.html', mode=mode, category=category, difficulty=difficulty, questions=questions)
 
 
 # Check the quiz, and upload the score to highscore db.
 # ask for a username
-# try adding a datetime for highscore
 @app.route("/submit", methods=["POST"])
 def check():
     mode = session.get('mode')  
+    category = session.get('category') 
     difficulty = session.get('difficulty') 
     questions_data = session.get('questions')
 
     score = 0
+    if difficulty == "true-false":
+        questions = [TrueFalse(
+            id=q['id'], 
+            name=q['name'], 
+            capital=q['capital'], 
+            continent=q['continent'], 
+            question=q['question'], 
+            answer_key=q['answer_key']
+        ) for q in questions_data]
 
-    if difficulty == "multiple-choice":
-        # Convert session questions back to a list of Question object.
+    elif difficulty == "multiple-choice":
         questions = [MultipleChoice(
             id=q['id'], 
             name=q['name'], 
             capital=q['capital'], 
             continent=q['continent'], 
-            desc=q['desc'], 
+            question=q['question'], 
             answer_key=q['answer_key'], 
             options=q['options']
         ) for q in questions_data]
 
-        for i in range(10):
-            answer = request.form.get(str(questions[i].id)) or "None"
-            questions[i].answer = answer
+    else:
+        questions = [Question(
+            id=q['id'], 
+            name=q['name'], 
+            capital=q['capital'], 
+            continent=q['continent'], 
+            question=q['question'], 
+            answer_key=q['answer_key']
+        ) for q in questions_data]
 
-            if (answer == questions[i].answer_key):
-                score += 1
+    for i in range(10):
+        answer = request.form.get(str(questions[i].id)) or "None"
+        questions[i].answer = answer
 
-    return render_template("score.html", score=score, questions=questions)
+        if (questions[i].answer == questions[i].answer_key):
+            score += 1
+
+    return render_template("score.html", mode=mode, category=category, difficulty=difficulty, score=score, questions=questions)
 
 
 @app.route("/highscore", methods=["POST", "GET"])
