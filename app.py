@@ -288,7 +288,7 @@ def highscore():
         if mode == "Capital city":
             mode = "capital"
         elif mode == "Country":
-            mode = "name"
+            mode = "country"
 
         # Set default values if 'All' is selected
         where_conditions = []
