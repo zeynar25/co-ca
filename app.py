@@ -259,21 +259,50 @@ def highscore():
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
 
-    query = cursor.execute('''SELECT id, user, score, mode, category, option, duration, record_date 
+    query_all = '''SELECT id, user, score, mode, category, option, duration, record_date 
         FROM highscore 
         ORDER BY score desc, duration 
-        LIMIT 100''')
+        LIMIT 100'''
+    
+    result_all = cursor.execute(query_all).fetchall()
+    
 
-    result = query.fetchall()
+    query_annually = '''SELECT id, user, score, mode, category, option, duration, record_date 
+        FROM highscore 
+        WHERE strftime('%Y', record_date) = strftime('%Y', 'now')
+        ORDER BY score desc, duration 
+        LIMIT 100'''
+    
+    result_annually = cursor.execute(query_annually).fetchall()
 
+    query_monthly = '''SELECT id, user, score, mode, category, option, duration, record_date 
+        FROM highscore 
+        WHERE strftime('%Y', record_date) = strftime('%Y', 'now')
+            AND strftime('%m', record_date) = strftime('%m', 'now')
+        ORDER BY score desc, duration 
+        LIMIT 50'''
+    
+    result_monthly = cursor.execute(query_monthly).fetchall()
+
+    query_weekly = '''SELECT id, user, score, mode, category, option, duration, record_date 
+        FROM highscore 
+        WHERE julianday('now') - julianday(record_date) <= 7
+        ORDER BY score desc, duration 
+        LIMIT 10'''
+
+    result_weekly = cursor.execute(query_weekly).fetchall()
     connection.commit()
     connection.close()
 
-    players = [Player(*row) for row in result]
 
-    data = {"number": 100, "mode": "All Mode", "category": "All Category", "option": "All Option"}
+    ranker_all = [Player(*row) for row in result_all]
+    ranker_annually = [Player(*row) for row in result_annually]
+    ranker_monthly = [Player(*row) for row in result_monthly]
+    ranker_weekly = [Player(*row) for row in result_weekly]
 
-    return render_template("highscore.html", players=players, data=data)
+    data = {"mode": "All Mode", "category": "All Category", "option": "All Option"}
+
+    return render_template("highscore.html", ranker_all=ranker_all, ranker_annually=ranker_annually, ranker_monthly=ranker_monthly, ranker_weekly=ranker_weekly, data=data)
 
 if __name__ == "__main__":
     app.run(debug=True)
