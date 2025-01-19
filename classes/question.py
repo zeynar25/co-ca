@@ -36,7 +36,7 @@ class Question(Country):
     @answer.setter
     def answer(self, answer):
         if isinstance(answer, str):
-            self.__answer = answer
+            self.__answer = answer.strip()
         else:
             raise ValueError("answer must be a string")
 
