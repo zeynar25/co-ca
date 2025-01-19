@@ -1,18 +1,12 @@
 # To do (For Nate)
-# - modify classes
-#   - add subclasses to question.py (trueorfalse, identification?)
-
-# - Implement trueorfalse and identification difficulty in quiz 
+# - Don't hardcode customize
 # - Implement highscore 
 #     - connect highscore to database
-#     - create table for highscore = id username difficulty datetime points
+#     - create table for highscore = id username mode category difficulty datetime points
 #     - add filter for difficulty and datetime (this week, this month, this year ganon)
 
 # To do (For team Frontend)
 # - Mananakal ako pag hindi pa sinimulan HTML+CSS
-
-# To do (For team database)
-# - Palagyan na laman countries sa Africa
 
 from flask import Flask, redirect, render_template, request, session
 
@@ -213,27 +207,41 @@ def check():
     return render_template("score.html", mode=mode, category=category, difficulty=difficulty, score=score, questions=questions)
 
 
+@app.route("/upload", methods=["POST"])
+def upload():
+    mode = session.get('mode')  
+    category = session.get('category') 
+    difficulty = session.get('difficulty') 
+
+    username = request.form.get("username")
+    score = int(request.form.get("score"))
+
+    if difficulty == "true-false":
+        score *= 2
+    elif difficulty == "multiple-choice":
+        score *= 5
+    else:
+        score *= 10
+
+    # get current datetime and assign on a variable
+
+    # Create player object based on credentials
+    #   id username mode category difficulty datetime
+    # Upload to highscore table
+
+    return redirect("/quiz")
+
 @app.route("/highscore", methods=["POST", "GET"])
 def highscore():
-    filter = "all"
-
-    # Team SQL gawa kayo query dito top 10 score based sa filter
-    players = [{"username" : "Nate", "score" : 10}, {"username" : "Samuel", "score" : 0}]
     if request.method == "POST":
-        username = request.form.get("username")
-        score = request.form.get("score")
+        players = []
 
-        if username is not None:
-            player = {"username": username, "score": int(score)}
-            players.append(player)
-            # up niyo to sa database
+        # get filters applied
+        # create a query out of it, top 10 nalang
 
-        else:
-            filter = request.form.get("filter") or "all"
+    # query for top 100 players of all mode, category, and difficulty and history
 
-            # update niyo yung query based sa laman nung filter variable.
-
-    return render_template("highscore.html", players=players, filter=filter)
+    return render_template("highscore.html", players=players)
 
 if __name__ == "__main__":
     app.run(debug=True)
