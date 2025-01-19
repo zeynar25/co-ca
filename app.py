@@ -1,22 +1,19 @@
 # To do (For Nate)
-# - Don't hardcode customize
-# - Implement highscore 
-#     - connect highscore to database
-#     - create table for highscore = id username mode category option datetime points
-#     - add filter for option and datetime (this week, this month, this year ganon)
-
-# To do (For team Frontend)
-# - Mananakal ako pag hindi pa sinimulan HTML+CSS
+# - Add features to highscore 
+#     - add 4 more queries, annually, monthly, weekly, daily based on record_date
+#     - add filter for mode, category, and option
 
 from flask import Flask, redirect, render_template, request, session
 
 import random
 import sqlite3
+from datetime import datetime
 
 from classes.country import Country
 from classes.question import Question
 from classes.multiple_choice import MultipleChoice
 from classes.true_false import TrueFalse
+from classes.player import Player
 
 
 app = Flask(__name__)
@@ -163,6 +160,7 @@ def quiz():
 
     # Convert questions to a list of dictionaries
     session['questions'] = [q.to_dict() for q in questions]
+    session['datetime_start'] = datetime.now()
 
     return render_template('quiz.html', mode=mode, category=category, option=option, questions=questions)
 
@@ -223,9 +221,13 @@ def upload():
     mode = session.get('mode')  
     category = session.get('category') 
     option = session.get('option') 
+    datetime_start = session.get('datetime_start').replace(tzinfo=None)
+    datetime_end = datetime.now().replace(tzinfo=None)
 
-    username = request.form.get("username")
+    user = request.form.get("username")
     score = int(request.form.get("score"))
+    duration = datetime_end - datetime_start
+    record_date = datetime.date()
 
     if option == "True or False":
         score *= 2
@@ -234,25 +236,44 @@ def upload():
     else:
         score *= 10
 
-    # get current datetime and assign on a variable
+    # upload results to database.
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+    cursor.execute(f"insert into highscore(user,) values('{user}', {score}, '{mode}', '{category}', '{option}', '{duration}', {record_date})")
+    connection.commit()
+    connection.close()
 
-    # Create player object based on credentials
-    #   id username mode category option datetime
-    # Upload to highscore table
-
-    return redirect("/quiz")
+    return redirect("/highscore")
 
 @app.route("/highscore", methods=["POST", "GET"])
 def highscore():
+    # When a filter is applied
     if request.method == "POST":
-        players = []
-
+        ...
         # get filters applied
         # create a query out of it, top 10 nalang
 
     # query for top 100 players of all mode, category, and option and history
 
-    return render_template("highscore.html", players=players)
+    # add 4 more queries, annually, monthly, weekly, daily based on record_date
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+
+    query = cursor.execute('''SELECT id, user, score, mode, category, option, duration, record_date 
+        FROM highscore 
+        ORDER BY score desc, duration 
+        LIMIT 100''')
+
+    result = query.fetchall()
+
+    connection.commit()
+    connection.close()
+
+    players = [Player(*row) for row in result]
+
+    data = {"number": 100, "mode": "All", "category": "All", "option": "All"}
+
+    return render_template("highscore.html", players=players, data=data)
 
 if __name__ == "__main__":
     app.run(debug=True)

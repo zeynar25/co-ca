@@ -1,15 +1,30 @@
 {% extends "layout.html" %}
 
 {%block head%}
-    <title>Top 10 players in {{ filter }} Category</title>
+    <title>Highscore</title>
 {%endblock%}
     
 {%block body%}
+    <h1>Top {{ data.number}} in {{ data.mode }} - {{ data.category }} - {{ data.option }}</h1>
     <ul>
-        {% for player in players %}
-            <li>
-                {{ player.username }} - {{ player.score }}
-            </li>
-        {% endfor %}
+        <table>
+            <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Score</th>
+                <th>Duration</th>
+                <th>Date</th>
+            </tr>
+            {% for player in players %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ player.user }}</td>
+                    <td>{{ player.score }}</td>
+                    <td>{{ player.duration }}</td>
+                    <td>{{ player.record_date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        
     </ul>
 {%endblock%}
