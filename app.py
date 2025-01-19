@@ -219,6 +219,9 @@ def check():
 @app.route("/upload", methods=["POST"])
 def upload():
     mode = session.get('mode')  
+    if mode == "name":
+        mode = "country"
+
     category = session.get('category') 
     option = session.get('option') 
     datetime_start = session.get('datetime_start').replace(tzinfo=None)
@@ -247,53 +250,137 @@ def upload():
 
 @app.route("/highscore", methods=["POST", "GET"])
 def highscore():
+    modes = ["All", "Capital city", "Country"]
+    categories = ["All", "Earth", "Asia", "Africa", "North America", "South America", "Europe", "Australia"]
+    options = ["All", "True or False", "Multiple Choice", "Identification"]
+
     # When a filter is applied
     if request.method == "POST":
-        ...
-        # get filters applied
-        # create a query out of it, top 10 nalang
+        mode = request.form.get("mode")
+        category = request.form.get("category")
+        option = request.form.get("option")
 
-    # query for top 100 players of all mode, category, and option and history
+        # Place the filter applied at the top of each list
+        modes.remove(mode)
+        categories.remove(category)
+        options.remove(option)
 
-    # add 4 more queries, annually, monthly, weekly, daily based on record_date
+        modes.insert(0, mode)
+        categories.insert(0, category)
+        options.insert(0, option)
+
+
+        if mode == "Capital city":
+            mode = "capital"
+        elif mode == "Country":
+            mode = "name"
+
+        # Set default values if 'All' is selected
+        where_conditions = []
+        params = []
+
+        # Filter by mode
+        if mode != "All":
+            where_conditions.append("mode = ?")
+            params.append(mode)
+
+        # Filter by category
+        if category != "All":
+            where_conditions.append("category = ?")
+            params.append(category)
+
+        # Filter by option
+        if option != "All":
+            where_conditions.append("option = ?")
+            params.append(option)
+
+
+        query = '''SELECT id, user, score, mode, category, option, duration, record_date 
+            FROM highscore'''
+
+        # Make 5 copies of query
+        query_all = query
+        query_annually = query
+        query_monthly = query
+        query_weekly = query
+
+        # Add WHERE clause if there are any filters
+        if where_conditions:
+            query_all += " WHERE " + " AND ".join(where_conditions)
+            query_annually += " WHERE " + " AND ".join(where_conditions)
+            query_monthly += " WHERE " + " AND ".join(where_conditions)
+            query_weekly += " WHERE " + " AND ".join(where_conditions)
+
+        # Add ORDER BY and LIMIT
+        query_all += " ORDER BY score DESC, duration LIMIT 100"
+        query_annually += " ORDER BY score DESC, duration LIMIT 100"
+        query_monthly += " ORDER BY score DESC, duration LIMIT 50"
+        query_weekly += " ORDER BY score DESC, duration LIMIT 10"
+
+
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+
+        cursor.execute(query_all, params)
+        result_all = cursor.fetchall()
+
+        cursor.execute(query_annually, params)
+        result_annually = cursor.fetchall()
+
+        cursor.execute(query_monthly, params)
+        result_monthly = cursor.fetchall()
+
+        cursor.execute(query_weekly, params)
+        result_weekly = cursor.fetchall()
+
+        connection.close()
+
+        # Map result to Player objects
+        ranker_all = [Player(*row) for row in result_all]
+        ranker_annually = [Player(*row) for row in result_annually]
+        ranker_monthly = [Player(*row) for row in result_monthly]
+        ranker_weekly = [Player(*row) for row in result_weekly]
+
+        if mode == "name":
+            mode = "Country"
+        elif mode == "capital":
+            mode = "Capital"
+
+        data = {"mode": mode, "category": category, "option": option}
+        data["mode"] += " Mode"
+        data["category"] += " Category"
+        data["option"] += " Option"
+
+        return render_template(
+            "highscore.html", 
+            ranker_all=ranker_all, 
+            ranker_annually=ranker_annually, 
+            ranker_monthly=ranker_monthly, 
+            ranker_weekly=ranker_weekly, 
+            data=data, 
+            modes=modes, 
+            categories=categories, 
+            options=options
+        )
+
+
+
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
 
-    query_all = '''SELECT id, user, score, mode, category, option, duration, record_date 
-        FROM highscore 
-        ORDER BY score desc, duration 
-        LIMIT 100'''
+    query = '''SELECT id, user, score, mode, category, option, duration, record_date 
+        FROM highscore '''
     
-    result_all = cursor.execute(query_all).fetchall()
+    result_all = cursor.execute(query + "ORDER BY score desc, duration LIMIT 100").fetchall()
+
+    result_annually = cursor.execute(query + "WHERE strftime('%Y', record_date) = strftime('%Y', 'now') ORDER BY score desc, duration LIMIT 100").fetchall()
     
+    result_monthly = cursor.execute(query + "WHERE strftime('%Y', record_date) = strftime('%Y', 'now') AND strftime('%m', record_date) = strftime('%m', 'now') ORDER BY score desc, duration LIMIT 50").fetchall()
 
-    query_annually = '''SELECT id, user, score, mode, category, option, duration, record_date 
-        FROM highscore 
-        WHERE strftime('%Y', record_date) = strftime('%Y', 'now')
-        ORDER BY score desc, duration 
-        LIMIT 100'''
-    
-    result_annually = cursor.execute(query_annually).fetchall()
+    result_weekly = cursor.execute(query + "WHERE julianday('now') - julianday(record_date) <= 7 ORDER BY score desc, duration LIMIT 10").fetchall()
 
-    query_monthly = '''SELECT id, user, score, mode, category, option, duration, record_date 
-        FROM highscore 
-        WHERE strftime('%Y', record_date) = strftime('%Y', 'now')
-            AND strftime('%m', record_date) = strftime('%m', 'now')
-        ORDER BY score desc, duration 
-        LIMIT 50'''
-    
-    result_monthly = cursor.execute(query_monthly).fetchall()
-
-    query_weekly = '''SELECT id, user, score, mode, category, option, duration, record_date 
-        FROM highscore 
-        WHERE julianday('now') - julianday(record_date) <= 7
-        ORDER BY score desc, duration 
-        LIMIT 10'''
-
-    result_weekly = cursor.execute(query_weekly).fetchall()
     connection.commit()
     connection.close()
-
 
     ranker_all = [Player(*row) for row in result_all]
     ranker_annually = [Player(*row) for row in result_annually]
@@ -302,7 +389,17 @@ def highscore():
 
     data = {"mode": "All Mode", "category": "All Category", "option": "All Option"}
 
-    return render_template("highscore.html", ranker_all=ranker_all, ranker_annually=ranker_annually, ranker_monthly=ranker_monthly, ranker_weekly=ranker_weekly, data=data)
+    return render_template(
+        "highscore.html", 
+        ranker_all=ranker_all, 
+        ranker_annually=ranker_annually, 
+        ranker_monthly=ranker_monthly, 
+        ranker_weekly=ranker_weekly, 
+        data=data, 
+        modes=modes, 
+        categories=categories, 
+        options=options
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
