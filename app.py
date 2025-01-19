@@ -22,15 +22,16 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.secret_key = 'uno-sa-oop'
 
 
-# Displays Play and highscore button.
+# Landing page: displays play and highscore button.
 @app.route("/", methods=["GET"])
 def index():
     return render_template('index.html') 
 
 
-# Render guess the capital or country questions.
+# Render customization of quiz.
 @app.route("/customize", methods=["GET", "POST"])
 def customize():
+    # If a request was submitted as POST, record the input data and redirect to quiz page.
     if request.method == "POST":
         selected_mode = request.form.get("mode")
         
@@ -49,13 +50,22 @@ def customize():
 
         return redirect("/quiz")
     
+    # If it's a GET request, display possible customizations for the quiz.
     mode = ["Capital city", "Country"]
     category = ["Earth", "Asia", "Africa", "North America", "South America", "Europe", "Australia"]
     option = ["True or False", "Multiple Choice", "Identification"]
 
     return render_template("customize.html", modes=mode, categories=category, options=option)
 
-def get_countries_by_category(category):
+
+# Generate the quiz based on mode and category
+@app.route("/quiz", methods=["GET"])
+def quiz():
+    # Retrieve values from session.
+    mode = session.get('mode')  
+    category = session.get('category') 
+    option = session.get('option') 
+
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
 
@@ -69,24 +79,16 @@ def get_countries_by_category(category):
     connection.commit()
     connection.close()
 
-    return [Country(*row) for row in result]
-
-# Generate the quiz based on mode and category
-@app.route("/quiz", methods=["GET"])
-def quiz():
-    # Retrieve values from session.
-    mode = session.get('mode')  
-    category = session.get('category') 
-    option = session.get('option') 
-
-    questions = []
-    countries = get_countries_by_category(category)
-    
+    # Convert elements from result to a Country objects.
+    countries = [Country(*row) for row in result]
     random.shuffle(countries)
 
+
     # First ten countries in the list will serve as the questions.
+    questions = []
     for i in range(10): 
         if option == "True or False":
+            # If answer is false, find some other country/capital to use for the question.
             choices = ["True", "False"]
             answer = random.choice(choices)
 
@@ -160,6 +162,8 @@ def quiz():
 
     # Convert questions to a list of dictionaries
     session['questions'] = [q.to_dict() for q in questions]
+
+    # Record the starting time of user in taking the quiz.
     session['datetime_start'] = datetime.now()
 
     return render_template('quiz.html', mode=mode, category=category, option=option, questions=questions)
@@ -174,7 +178,7 @@ def check():
     option = session.get('option') 
     questions_data = session.get('questions')
 
-    score = 0
+    # Convert questions_data back to its Class. 
     if option == "True or False":
         questions = [TrueFalse(
             id=q['id'], 
@@ -206,6 +210,8 @@ def check():
             answer_key=q['answer_key']
         ) for q in questions_data]
 
+    # Check if each input matches its answer key.
+    score = 0
     for i in range(10):
         answer = request.form.get(str(questions[i].id)) or "None"
         questions[i].answer = answer
@@ -229,17 +235,26 @@ def upload():
 
     user = request.form.get("username")
     score = int(request.form.get("score"))
+
+    # Get the difference.
     duration = datetime_end - datetime_start
+
+    # Get the date when the quiz was taken in a YYYY-MM-DD format.
     record_date = datetime_end.strftime("%Y-%m-%d")
 
+    # Each item in true or false is worth 2 points.
     if option == "True or False":
         score *= 2
+        
+    # Each item in multiple choice is worth 3 points.
     elif option == "Multiple Choice":
-        score *= 5
-    else:
-        score *= 10
+        score *= 3
 
-    # upload results to database.
+    # Each item in identification is worth 5 points.
+    else:
+        score *= 5
+
+    # Upload results to database.
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
     cursor.execute(f"insert into highscore(user, score, mode, category, option, duration, record_date) values('{user}', {score}, '{mode}', '{category}', '{option}', '{duration}', '{record_date}')")
@@ -250,11 +265,12 @@ def upload():
 
 @app.route("/highscore", methods=["POST", "GET"])
 def highscore():
+    # Filter choices.
     modes = ["All", "Capital city", "Country"]
     categories = ["All", "Earth", "Asia", "Africa", "North America", "South America", "Europe", "Australia"]
     options = ["All", "True or False", "Multiple Choice", "Identification"]
 
-    # When a filter is applied
+    # When a filter is applied.
     if request.method == "POST":
         mode = request.form.get("mode")
         category = request.form.get("category")
@@ -268,7 +284,6 @@ def highscore():
         modes.insert(0, mode)
         categories.insert(0, category)
         options.insert(0, option)
-
 
         if mode == "Capital city":
             mode = "capital"
@@ -341,6 +356,7 @@ def highscore():
         ranker_monthly = [Player(*row) for row in result_monthly]
         ranker_weekly = [Player(*row) for row in result_weekly]
 
+        # Convert mode to its aesthetic version.
         if mode == "name":
             mode = "Country"
         elif mode == "capital":
@@ -362,8 +378,6 @@ def highscore():
             categories=categories, 
             options=options
         )
-
-
 
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
