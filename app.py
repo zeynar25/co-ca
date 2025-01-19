@@ -271,7 +271,7 @@ def highscore():
 
     players = [Player(*row) for row in result]
 
-    data = {"number": 100, "mode": "All", "category": "All", "option": "All"}
+    data = {"number": 100, "mode": "All Mode", "category": "All Category", "option": "All Option"}
 
     return render_template("highscore.html", players=players, data=data)
 
