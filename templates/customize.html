@@ -6,27 +6,24 @@
 
 {%block body%}
     <form action="/customize" method="POST">
-        <label id = "mode">Guess the... </label>
-        <input type="radio" name="mode" id="mode-capital" value="capital" required>Capital
-        <input type="radio" name="mode" id="mode-country" value="name" required>Country
+        <label>Guess the... </label>
+        {% for mode in modes %}
+            <input type="radio" name="mode" id="mode-{{ mode }}" value="{{ mode }}" required>{{ mode }}
+        {% endfor %}
         
         <br>
 
-        <label id = "mode">Category:</label>
-        <input type="radio" name="category" id="category-earth" value="Earth" required>Earth
-        <input type="radio" name="category" id="category-asia" value="Asia" required>Asia
-        <input type="radio" name="category" id="category-africa" value="Africa" required>Africa
-        <input type="radio" name="category" id="category-north-america" value="North America" required>North America
-        <input type="radio" name="category" id="category-south-america" value="South America" required>South America
-        <input type="radio" name="category" id="category-europe" value="Europe" required>Europe
-        <input type="radio" name="category" id="category-australia" value="Australia" required>Australia
+        <label>Category:</label>
+        {% for category in categories %}
+            <input type="radio" name="category" id="category-{{ category }}" value="{{ category }}" required>{{ category }}
+        {% endfor %}
         
         <br>
-        
-        <label id = "mode">Type:</label>
-        <input type="radio" name="difficulty" id="difficulty-tf" value="true-false" required>True or False
-        <input type="radio" name="difficulty" id="difficulty-mc" value="multiple-choice" required>Multiple Choice
-        <input type="radio" name="difficulty" id="difficulty-id" value="identification" required>Identification
+
+        <label>Type:</label>
+        {% for option in options %}
+            <input type="radio" name="option" id="option-{{ option }}" value="{{ option }}" required>{{ option }}
+        {% endfor %}
 
         <br>
 

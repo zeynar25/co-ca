@@ -9,7 +9,7 @@
         {% for question in questions %}
             <p>{{ question.question }}</p>
             
-            {% if difficulty == "identification" %}
+            {% if option == "Identification" %}
                 <input type="text" name="{{ question.id }}" id="{{ question.id }}"><br>
             {% else %}
                 {% for option in question.options %}

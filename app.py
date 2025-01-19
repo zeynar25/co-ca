@@ -2,8 +2,8 @@
 # - Don't hardcode customize
 # - Implement highscore 
 #     - connect highscore to database
-#     - create table for highscore = id username mode category difficulty datetime points
-#     - add filter for difficulty and datetime (this week, this month, this year ganon)
+#     - create table for highscore = id username mode category option datetime points
+#     - add filter for option and datetime (this week, this month, this year ganon)
 
 # To do (For team Frontend)
 # - Mananakal ako pag hindi pa sinimulan HTML+CSS
@@ -36,16 +36,27 @@ def index():
 def customize():
     if request.method == "POST":
         selected_mode = request.form.get("mode")
+        
+        if selected_mode == "Capital city":
+            selected_mode = "capital"
+        elif selected_mode == "Country":
+            selected_mode = "name"
+
         selected_categ = request.form.get("category")
-        selected_difficulty = request.form.get("difficulty")
+
+        selected_option = request.form.get("option")
 
         session['mode'] = selected_mode
         session['category'] = selected_categ
-        session['difficulty'] = selected_difficulty
+        session['option'] = selected_option
 
         return redirect("/quiz")
     
-    return render_template("customize.html")
+    mode = ["Capital city", "Country"]
+    category = ["Earth", "Asia", "Africa", "North America", "South America", "Europe", "Australia"]
+    option = ["True or False", "Multiple Choice", "Identification"]
+
+    return render_template("customize.html", modes=mode, categories=category, options=option)
 
 def get_countries_by_category(category):
     connection = sqlite3.connect("database.db")
@@ -69,7 +80,7 @@ def quiz():
     # Retrieve values from session.
     mode = session.get('mode')  
     category = session.get('category') 
-    difficulty = session.get('difficulty') 
+    option = session.get('option') 
 
     questions = []
     countries = get_countries_by_category(category)
@@ -78,7 +89,7 @@ def quiz():
 
     # First ten countries in the list will serve as the questions.
     for i in range(10): 
-        if difficulty == "true-false":
+        if option == "True or False":
             choices = ["True", "False"]
             answer = random.choice(choices)
 
@@ -108,7 +119,7 @@ def quiz():
                 answer
             )
 
-        elif difficulty == "multiple-choice":
+        elif option == "Multiple Choice":
             answer_key = None
 
             if mode == "name":
@@ -153,7 +164,7 @@ def quiz():
     # Convert questions to a list of dictionaries
     session['questions'] = [q.to_dict() for q in questions]
 
-    return render_template('quiz.html', mode=mode, category=category, difficulty=difficulty, questions=questions)
+    return render_template('quiz.html', mode=mode, category=category, option=option, questions=questions)
 
 
 # Check the quiz, and upload the score to highscore db.
@@ -162,11 +173,11 @@ def quiz():
 def check():
     mode = session.get('mode')  
     category = session.get('category') 
-    difficulty = session.get('difficulty') 
+    option = session.get('option') 
     questions_data = session.get('questions')
 
     score = 0
-    if difficulty == "true-false":
+    if option == "True or False":
         questions = [TrueFalse(
             id=q['id'], 
             name=q['name'], 
@@ -176,7 +187,7 @@ def check():
             answer_key=q['answer_key']
         ) for q in questions_data]
 
-    elif difficulty == "multiple-choice":
+    elif option == "Multiple Choice":
         questions = [MultipleChoice(
             id=q['id'], 
             name=q['name'], 
@@ -204,21 +215,21 @@ def check():
         if (questions[i].answer == questions[i].answer_key):
             score += 1
 
-    return render_template("score.html", mode=mode, category=category, difficulty=difficulty, score=score, questions=questions)
+    return render_template("score.html", mode=mode, category=category, option=option, score=score, questions=questions)
 
 
 @app.route("/upload", methods=["POST"])
 def upload():
     mode = session.get('mode')  
     category = session.get('category') 
-    difficulty = session.get('difficulty') 
+    option = session.get('option') 
 
     username = request.form.get("username")
     score = int(request.form.get("score"))
 
-    if difficulty == "true-false":
+    if option == "True or False":
         score *= 2
-    elif difficulty == "multiple-choice":
+    elif option == "Multiple Choice":
         score *= 5
     else:
         score *= 10
@@ -226,7 +237,7 @@ def upload():
     # get current datetime and assign on a variable
 
     # Create player object based on credentials
-    #   id username mode category difficulty datetime
+    #   id username mode category option datetime
     # Upload to highscore table
 
     return redirect("/quiz")
@@ -239,7 +250,7 @@ def highscore():
         # get filters applied
         # create a query out of it, top 10 nalang
 
-    # query for top 100 players of all mode, category, and difficulty and history
+    # query for top 100 players of all mode, category, and option and history
 
     return render_template("highscore.html", players=players)
 
