@@ -227,7 +227,7 @@ def upload():
     user = request.form.get("username")
     score = int(request.form.get("score"))
     duration = datetime_end - datetime_start
-    record_date = datetime.date()
+    record_date = datetime_end.strftime("%Y-%m-%d")
 
     if option == "True or False":
         score *= 2
@@ -239,7 +239,7 @@ def upload():
     # upload results to database.
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute(f"insert into highscore(user,) values('{user}', {score}, '{mode}', '{category}', '{option}', '{duration}', {record_date})")
+    cursor.execute(f"insert into highscore(user, score, mode, category, option, duration, record_date) values('{user}', {score}, '{mode}', '{category}', '{option}', '{duration}', '{record_date}')")
     connection.commit()
     connection.close()
 
