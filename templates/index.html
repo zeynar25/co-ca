@@ -1,15 +1,38 @@
-{% extends "layout.html" %}
-
-{%block head%}
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
     <title>Co-Ca</title>
-{%endblock%}
-
-{%block body%}
-    <form action="/customize" method="get">
-        <input type="submit" value="Play">
-    </form>
-
-    <form action="/highscore" method="post">
-        <input type="submit" value="Highscore">
-    </form>
-{%endblock%}
+    <link rel="stylesheet" href="/static/index_style.css">
+    {% endblock %}
+</head>
+<body>
+    {%block body %}
+    <div class="navbar">
+        <div class="logo">
+            <h1>Co-Ca</h1>
+        </div>
+        <div class="links">
+            <a href="">Play</a>
+            <a href="">Home</a>
+            <a href="">About</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="text">
+            <h1>Get familiar with the world!</h1>
+            <h2>Gamify your learning with Co-Ca.</h2>
+        </div>
+        <div class="buttons">
+            <form action="/customize" method="get">
+                <button type="submit" class="btn">Play</button>
+            </form>
+        
+            <form action="/highscore" method="post">
+                <button type="submit" class="btn">Highscore</button>
+            </form>
+        </div>
+    </div>
+    {% endblock %}
+</body>
+</html>
