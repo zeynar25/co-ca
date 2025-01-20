@@ -33,6 +33,116 @@
             </form>
         </div>
     </div>
+
+    <h1>Top rankers</h1>
+
+    <form action="/" method="POST">
+        <label for="mode">Mode: </label>
+        <select name="mode" id="mode">
+            {% for mode in modes %}
+                <option value="{{ mode }}">{{ mode }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        
+        <label for="category">Category: </label>
+        <select name="category" id="category">
+            {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        
+        <label for="option">Option: </label>
+        <select name="option" id="option">
+            {% for option in options %}
+                <option value="{{ option }}">{{ option }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <input type="submit" value="Apply filter">
+    </form>
+
+    <h4>All-Time Top 100</h4>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Duration</th>
+            <th>Date</th>
+        </tr>
+        {% for player in ranker_all %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ player.user }}</td>
+                <td>{{ player.score }}</td>
+                <td>{{ player.duration }}</td>
+                <td>{{ player.record_date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h4>Annually Top 100</h4>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Duration</th>
+            <th>Date</th>
+        </tr>
+        {% for player in ranker_annually %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ player.user }}</td>
+                <td>{{ player.score }}</td>
+                <td>{{ player.duration }}</td>
+                <td>{{ player.record_date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h4>Monthly Top 50</h4>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Duration</th>
+            <th>Date</th>
+        </tr>
+        {% for player in ranker_monthly %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ player.user }}</td>
+                <td>{{ player.score }}</td>
+                <td>{{ player.duration }}</td>
+                <td>{{ player.record_date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h4>Weekly Top 10</h4>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Duration</th>
+            <th>Date</th>
+        </tr>
+        {% for player in ranker_weekly %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ player.user }}</td>
+                <td>{{ player.score }}</td>
+                <td>{{ player.duration }}</td>
+                <td>{{ player.record_date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
     {% endblock %}
 </body>
 </html>
