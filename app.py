@@ -16,6 +16,16 @@ app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.secret_key = 'uno-sa-oop'
 
+def seconds_to_time(total_seconds):
+    # Convert total seconds to hours, minutes, seconds, and milliseconds
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    seconds = int(total_seconds % 60)
+    milliseconds = int((total_seconds % 1) * 1000)
+
+    # Format as hh:mm:ss.mmm
+    formatted_time = f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:05}"
+    return formatted_time
 
 # Landing page: displays play and highscore button.
 @app.route("/", methods=["GET", "POST"])
@@ -88,6 +98,7 @@ def index():
         query_weekly += " ORDER BY score DESC, duration LIMIT 10"
 
 
+        # Fetch results and store in a list.
         connection = sqlite3.connect("database.db")
         cursor = connection.cursor()
 
@@ -104,6 +115,15 @@ def index():
         result_weekly = cursor.fetchall()
 
         connection.close()
+
+        # Convert each fetched duration (in seconds) to HH:MM:SS.sssss format
+        result_all = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_all]
+
+        result_annually = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_annually]
+
+        result_monthly = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_monthly]
+
+        result_weekly = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_weekly]
 
         # Map result to Player objects
         ranker_all = [Player(*row) for row in result_all]
@@ -150,6 +170,14 @@ def index():
 
     connection.commit()
     connection.close()
+
+    result_all = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_all]
+
+    result_annually = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_annually]
+
+    result_monthly = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_monthly]
+
+    result_weekly = [(row[0], row[1], row[2], row[3], row[4], row[5], seconds_to_time(row[6]), row[7]) for row in result_weekly]
 
     ranker_all = [Player(*row) for row in result_all]
     ranker_annually = [Player(*row) for row in result_annually]
@@ -322,11 +350,11 @@ def check():
     questions_data = session.get('questions')
     
     datetime_start = session.get('datetime_start').replace(tzinfo=None)
-
     datetime_end = datetime.now().replace(tzinfo=None)
-    session['datetime_end'] = datetime_end
 
-    duration = int((datetime_end - datetime_start).total_seconds())
+    duration = datetime_end - datetime_start
+    duration = duration.total_seconds()
+    session['duration'] = duration
 
     # Convert questions_data back to its Class. 
     if option == "True or False":
@@ -369,7 +397,7 @@ def check():
         if (questions[i].answer == questions[i].answer_key):
             score += 1
 
-    return render_template("score.html", mode=mode, category=category, option=option, score=score, duration=duration, questions=questions)
+    return render_template("score.html", mode=mode, category=category, option=option, score=score, duration=seconds_to_time(duration), questions=questions)
 
 
 @app.route("/upload", methods=["POST"])
@@ -380,7 +408,7 @@ def upload():
 
     category = session.get('category') 
     option = session.get('option') 
-    duration = session.get('datetime_end').replace(tzinfo=None) - session.get('datetime_start').replace(tzinfo=None)
+    duration = session.get('duration') 
 
     user = request.form.get("username")
     score = int(request.form.get("score"))
