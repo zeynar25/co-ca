@@ -1,65 +1,57 @@
-{% extends "layout.html" %}
-
-{%block head%}
-    <title>Guess the {{ mode }} of {{ category }}</title>
-    <style>
-        .correct {
-            background-color: green;
-            color: white;
-        }
-        .incorrect {
-            background-color: red;
-            color: white;
-        }
-        
-        .neutral {
-            background-color: black;
-            color: white;
-        }
-    </style>
-{%endblock%}
-
-{%block body%}
-    <h1>Congratulations! You got {{ score }} items correct out of 10 in {{ duration }} seconds</h1>
-    {% for question in questions %}
-        <p>{{ question.question }}</p>
-        
-        <ul>
-            <!-- 
-                basta ginawa ko naka 'correct' class yung mga tamang sagot
-                'incorrect' class pag sinagot pero mali or walang sinagot
-                'neither' class pag wala lang, salingkitkit
-            -->
-
-            {% if option == "Identification" %}
-                <li class="{% if question.answer == question.answer_key %}correct
-                    {% else %}incorrect
-                    {% endif %}">
-                    {{ question.answer }}
-                </li>
-                {% if question.answer != question.answer_key %}
-                    <li>The correct answer is {{question.answer_key}}.</li>
-                {% endif %}
-
-            {% else %}
-                {% for option in question.options %}
-                        <li class="{% if (option == question.answer and option != question.answer_key) or (question.answer == 'None' and option == question.answer_key) %}incorrect
-                        {% elif option == question.answer_key %}correct
-                        {% else %}neither
-                        {% endif %}">
-                        {{ option }}
-                    </li>
-                {% endfor %}
-            {% endif %}
-        </ul>
-    {% endfor %}
-
-    <div>
-        <form action="/upload" method="POST">   
-            <label for="username">Username: </label>
-            <input type="text" name="username" id="username" value="anonymous">
-            <input type="hidden" name="score" value="{{ score }}">
-            <button type="submit">Upload</button>
-        </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <link rel="stylesheet" href="/static/score.css">
+</head>
+<body>
+    <div class = "LOGO">
+        <img class = "cocaLogo"src = "/static/logo.png">
     </div>
-{%endblock%}
+
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <h1>Congrats! Quiz Finished</h1>
+            <p>Your Score:</p>
+            <div class="score" id="score-percentage" data-score="{{ score }}" data-total="10"></div>
+            <div class="progress-bar">
+                <div class="progress-bar-fill"></div>
+            </div>
+            <button onclick="window.location.href='/'">Home</button>
+            <button onclick="window.location.href='/'">Restart Quiz</button>
+        
+            <!-- Upload Form -->
+            <div class="upload-form">
+                <form action="/upload" method="POST">
+                    <label for="username">Enter your name:</label>
+                    <input type="text" name="username" id="username" value="anonymous">
+                    <input type="hidden" name="score" value="{{ score }}">
+                    <button type="submit">Upload</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <h2>Your Answers:</h2>
+            <ul>
+                {% for question in questions %}
+                <li class="{{ 'correct' if question.answer == question.answer_key else 'incorrect' }}">
+                    {{ question.question }}
+                    <ul>
+                        <li>Your Answer: {{ question.answer }}</li>
+                        {% if question.answer != question.answer_key %}
+                        <li>Correct Answer: {{ question.answer_key }}</li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <script src="/static/score.js"></script>
+</body>
+</html>
