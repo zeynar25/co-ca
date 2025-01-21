@@ -6,68 +6,192 @@
 }
 
 .navbar {
-    height: 85px;
+    color: #529EE0;
+    height: 70px;
     width: 100%;
     padding: 20px 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: white;
+    box-shadow:  5px 5px 20px #c2c1c1,
+    -5px -5px 20px #acacac;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img{
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
 }
 
 .navbar a {
-    margin-left: 40px;
+    padding: 10px 50px;
     text-decoration: none;
-    color: black;
+    color: #529EE0;
     font-weight: bold;
-}
-
-.navbar a:visited {
-    text-decoration: none;
-    color: black;
+    transition: 0.2s;
 }
 
 body {
     margin: 0;
     height: 100vh;
-    background: rgb(153,199,238);
-    background: linear-gradient(0deg, rgba(153,199,238,1) 0%, rgba(198,225,247,1) 25%, rgba(255,255,255,1) 70%);
+    background-image: url(Background.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
+
 .main {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    height: 100vh;
-    width: 100%
+    height: 100%;
+    width: 100%;
+    margin-top: 100px;
+    scroll-behavior: smooth;
 }
 .text h2 {
-    margin: 20px;
+    margin: 10px;
     font-size: 2em;
 } 
 .buttons {
-    margin-top: 35x;
+    margin-top: 15x;
+    display: flex;
 }
 
 .btn {
-    background-color: rgb(153,199,238) ;
+    background-color: #529EE0 ;
     color: white;
     padding: 20px 40px;
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    font-size: 2em;
+    font-size: 35px;
     font-weight: bold;
     margin: 10px;
 }
 
 .btn:hover {
-    background-color: rgb(137, 190, 236);
+    background-color: #217ac9;
+    
 }
 
 .text {
-    margin-top: 40px;
+    margin-top: 100px;
 }
 
 .text h1 {
     font-size: 4em;
+}
+
+.navbar a:hover {
+    background-color: #217ac9;
+    padding: 20px 50px;
+    color: white;
+    border-radius: 10px;
+}
+
+.down{
+    margin-top: 50px;
+}
+
+.down-arrow {
+    font-weight: bolder;
+    font-size: 30px;
+    text-decoration: none;
+    color: #529EE0;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.down-arrow:hover {
+    transform: scale(1.2);
+    color: #217ac9;
+}
+
+.leaderboards {
+    width: 70%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+  
+.leaderboards h1,
+.leaderboards h4 {
+    text-align: center;
+    color: black;
+    margin-bottom: 10px;
+  }
+  
+form {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+  
+form label {
+    font-weight: bold;
+    color: black;
+}
+  
+form select,
+form input[type="submit"] {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    font-size: 16px;
+}
+  
+form input[type="submit"] {
+    background-color: #529EE0;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+  
+form input[type="submit"]:hover {
+    background-color: #217ac9;
+}
+  
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border-radius: 10px;
+}
+  
+table th,
+table td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #eaeaea;
+}
+  
+table th {
+    background-color: #529EE0;
+    color: white;
+}
+  
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+  
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+table td {
+    color: #555555;
 }
