@@ -16,6 +16,39 @@ app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.secret_key = 'uno-sa-oop'
 
+def fetch_highscores(filters=None, limit=100, time_filter=None):
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+
+    base_query = "SELECT id, user, score, mode, category, option, duration, record_date FROM highscore"
+    params = []
+
+    if filters:
+        conditions = []
+        if filters.get("mode") and filters["mode"] != "All":
+            conditions.append("mode = ?")
+            params.append(filters["mode"])
+
+        if filters.get("category") and filters["category"] != "All":
+            conditions.append("category = ?")
+            params.append(filters["category"])
+
+        if filters.get("option") and filters["option"] != "All":
+            conditions.append("option = ?")
+            params.append(filters["option"])
+
+        base_query += " WHERE " + " AND ".join(conditions)
+
+    if time_filter:
+        base_query += f" AND {time_filter}"
+
+    base_query += f" ORDER BY score DESC, duration LIMIT {limit}"
+
+    result = cursor.execute(base_query, params).fetchall()
+    connection.close()
+
+    return result
+
 
 # Landing page: displays play and highscore button.
 @app.route("/", methods=["GET", "POST"])
@@ -45,65 +78,11 @@ def index():
         elif mode == "Country":
             mode = "country"
 
-        # Set default values if 'All' is selected
-        where_conditions = []
-        params = []
-
-        # Filter by mode
-        if mode != "All":
-            where_conditions.append("mode = ?")
-            params.append(mode)
-
-        # Filter by category
-        if category != "All":
-            where_conditions.append("category = ?")
-            params.append(category)
-
-        # Filter by option
-        if option != "All":
-            where_conditions.append("option = ?")
-            params.append(option)
-
-
-        query = '''SELECT id, user, score, mode, category, option, duration, record_date 
-            FROM highscore'''
-
-        # Make 5 copies of query
-        query_all = query
-        query_annually = query
-        query_monthly = query
-        query_weekly = query
-
-        # Add WHERE clause if there are any filters
-        if where_conditions:
-            query_all += " WHERE " + " AND ".join(where_conditions)
-            query_annually += " WHERE " + " AND ".join(where_conditions)
-            query_monthly += " WHERE " + " AND ".join(where_conditions)
-            query_weekly += " WHERE " + " AND ".join(where_conditions)
-
-        # Add ORDER BY and LIMIT
-        query_all += " ORDER BY score DESC, duration LIMIT 100"
-        query_annually += " ORDER BY score DESC, duration LIMIT 100"
-        query_monthly += " ORDER BY score DESC, duration LIMIT 50"
-        query_weekly += " ORDER BY score DESC, duration LIMIT 10"
-
-
-        connection = sqlite3.connect("database.db")
-        cursor = connection.cursor()
-
-        cursor.execute(query_all, params)
-        result_all = cursor.fetchall()
-
-        cursor.execute(query_annually, params)
-        result_annually = cursor.fetchall()
-
-        cursor.execute(query_monthly, params)
-        result_monthly = cursor.fetchall()
-
-        cursor.execute(query_weekly, params)
-        result_weekly = cursor.fetchall()
-
-        connection.close()
+        # Get the list of highscores.
+        result_all = fetch_highscores(filters={}, limit=100)
+        result_annually = fetch_highscores(filters={}, limit=100, time_filter="strftime('%Y', record_date) = strftime('%Y', 'now')")
+        result_monthly = fetch_highscores(filters={}, limit=50, time_filter="strftime('%Y-%m', record_date) = strftime('%Y-%m', 'now')")
+        result_weekly = fetch_highscores(filters={}, limit=10, time_filter="julianday('now') - julianday(record_date) <= 7")
 
         # Map result to Player objects
         ranker_all = [Player(*row) for row in result_all]
@@ -117,6 +96,7 @@ def index():
         elif mode == "capital":
             mode = "Capital"
 
+        # Will be used as labels.
         data = {"mode": mode, "category": category, "option": option}
         data["mode"] += " Mode"
         data["category"] += " Category"
@@ -322,12 +302,11 @@ def check():
     questions_data = session.get('questions')
     
     datetime_start = session.get('datetime_start').replace(tzinfo=None)
+
     datetime_end = datetime.now().replace(tzinfo=None)
-    duration = datetime_end - datetime_start
-    
     session['datetime_end'] = datetime_end
 
-    duration = int(duration.total_seconds())
+    duration = int((datetime_end - datetime_start).total_seconds())
 
     # Convert questions_data back to its Class. 
     if option == "True or False":
@@ -390,21 +369,22 @@ def upload():
     record_date = datetime.now().strftime("%Y-%m-%d")
 
     # Each item in true or false is worth 2 points.
-    if option == "True or False":
-        score *= 2
-        
     # Each item in multiple choice is worth 3 points.
-    elif option == "Multiple Choice":
-        score *= 3
-
     # Each item in identification is worth 5 points.
-    else:
-        score *= 5
+    score_multiplier = {
+        "True or False": 2,
+        "Multiple Choice": 3,
+        "Identification": 5
+    }
+    score *= score_multiplier.get(option, 1)
 
     # Upload results to database.
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute(f"insert into highscore(user, score, mode, category, option, duration, record_date) values('{user}', {score}, '{mode}', '{category}', '{option}', '{duration}', '{record_date}')")
+    cursor.execute(
+        "INSERT INTO highscore(user, score, mode, category, option, duration, record_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (user, score, mode, category, option, duration, record_date)
+    )
     connection.commit()
     connection.close()
 
