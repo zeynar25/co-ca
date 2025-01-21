@@ -1,0 +1,145 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url(Background.png);
+    background-size: cover;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.left-panel, .right-panel {
+    width: 48%;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.left-panel {
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+}
+
+.progress-bar {
+    background-color: #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    height: 20px;
+    margin: 20px 0;
+}
+
+.progress-bar-fill {
+    background-color: #529EE0 ;
+    height: 100%;
+    width: 0;
+    transition: width 0.5s ease-in-out;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    line-height: 20px;
+}
+
+.score {
+    font-size: 2em;
+    margin: 10px 0;
+    color: #529EE0 ;
+}
+
+button {
+    margin: 10px 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    background-color: #529EE0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2775b9;
+}
+
+.right-panel ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.correct {
+    background-color: #529EE0;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.incorrect {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.neutral {
+    background-color: black;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.cocaLogo {
+    width: 100px;
+}
+
+.LOGO {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.upload-form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.upload-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #333;
+}
+
+.upload-form input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.upload-form button {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    background-color: #529EE0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upload-form button:hover {
+    background-color: #2775b9;
+}
