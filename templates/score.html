@@ -20,7 +20,7 @@
 {%endblock%}
 
 {%block body%}
-    <h1>Congratulations! You got {{ score }} items correct out of 10</h1>
+    <h1>Congratulations! You got {{ score }} items correct out of 10 in {{ duration }} seconds</h1>
     {% for question in questions %}
         <p>{{ question.question }}</p>
         
@@ -57,7 +57,7 @@
     <div>
         <form action="/upload" method="POST">   
             <label for="username">Username: </label>
-            <input type="text" name="username" id="username" value="Unknown">
+            <input type="text" name="username" id="username" value="anonymous">
             <input type="hidden" name="score" value="{{ score }}">
             <button type="submit">Upload</button>
         </form>

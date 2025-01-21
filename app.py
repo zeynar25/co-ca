@@ -1,8 +1,3 @@
-# To do (For Nate)
-# - Add features to highscore 
-#     - add 4 more queries, annually, monthly, weekly, daily based on record_date
-#     - add filter for mode, category, and option
-
 from flask import Flask, redirect, render_template, request, session
 
 import random
@@ -325,6 +320,14 @@ def check():
     category = session.get('category') 
     option = session.get('option') 
     questions_data = session.get('questions')
+    
+    datetime_start = session.get('datetime_start').replace(tzinfo=None)
+    datetime_end = datetime.now().replace(tzinfo=None)
+    duration = datetime_end - datetime_start
+    
+    session['datetime_end'] = datetime_end
+
+    duration = int(duration.total_seconds())
 
     # Convert questions_data back to its Class. 
     if option == "True or False":
@@ -367,7 +370,7 @@ def check():
         if (questions[i].answer == questions[i].answer_key):
             score += 1
 
-    return render_template("score.html", mode=mode, category=category, option=option, score=score, questions=questions)
+    return render_template("score.html", mode=mode, category=category, option=option, score=score, duration=duration, questions=questions)
 
 
 @app.route("/upload", methods=["POST"])
@@ -378,17 +381,13 @@ def upload():
 
     category = session.get('category') 
     option = session.get('option') 
-    datetime_start = session.get('datetime_start').replace(tzinfo=None)
-    datetime_end = datetime.now().replace(tzinfo=None)
+    duration = session.get('datetime_end').replace(tzinfo=None) - session.get('datetime_start').replace(tzinfo=None)
 
     user = request.form.get("username")
     score = int(request.form.get("score"))
 
-    # Get the difference.
-    duration = datetime_end - datetime_start
-
     # Get the date when the quiz was taken in a YYYY-MM-DD format.
-    record_date = datetime_end.strftime("%Y-%m-%d")
+    record_date = datetime.now().strftime("%Y-%m-%d")
 
     # Each item in true or false is worth 2 points.
     if option == "True or False":
