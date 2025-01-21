@@ -93,8 +93,8 @@ def index():
 
         # Add ORDER BY and LIMIT
         query_all += " ORDER BY score DESC, duration LIMIT 100"
-        query_annually += " ORDER BY score DESC, duration LIMIT 100"
-        query_monthly += " ORDER BY score DESC, duration LIMIT 50"
+        query_annually += " ORDER BY score DESC, duration LIMIT 50"
+        query_monthly += " ORDER BY score DESC, duration LIMIT 25"
         query_weekly += " ORDER BY score DESC, duration LIMIT 10"
 
 
