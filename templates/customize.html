@@ -1,32 +1,63 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Your Quiz</title>
+    <link rel="stylesheet" href="/static/customize.css">
+</head>
+<body>
+    <div class = "LOGO">
+        <img class = "cocaLogo"src = "/static/logo.png">
+    </div>
+    <div class="container">
+        <h1>Mode Selection</h1>
+        <form action="/customize" method="POST" class="quiz-form">
+            <!-- Guess the... -->
+            <div class="section">
+                <p>Guess the...</p>
+                <div class="buttons-group" id="mode-group">
+                    {% for mode in modes %}
+                    <label class="quiz-button">
+                        <input type="radio" name="mode" value="{{ mode }}" required>
+                        <span>{{ mode }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
 
-{%block head%}
-    <title>Customize your quiz</title>
-{%endblock%}
+            <!-- Category -->
+            <div class="section">
+                <p>Category:</p>
+                <div class="buttons-group" id="category-group">
+                    {% for category in categories %}
+                    <label class="quiz-button">
+                        <input type="radio" name="category" value="{{ category }}" required>
+                        <span>{{ category }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
 
-{%block body%}
-    <form action="/customize" method="POST">
-        <label>Guess the... </label>
-        {% for mode in modes %}
-            <input type="radio" name="mode" id="mode-{{ mode }}" value="{{ mode }}" required>{{ mode }}
-        {% endfor %}
-        
-        <br>
+            <!-- Test Type -->
+            <div class="section">
+                <p>Test Type:</p>
+                <div class="buttons-group" id="option-group">
+                    {% for option in options %}
+                    <label class="quiz-button">
+                        <input type="radio" name="option" value="{{ option }}" required>
+                        <span>{{ option }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
 
-        <label>Category:</label>
-        {% for category in categories %}
-            <input type="radio" name="category" id="category-{{ category }}" value="{{ category }}" required>{{ category }}
-        {% endfor %}
-        
-        <br>
-
-        <label>Type:</label>
-        {% for option in options %}
-            <input type="radio" name="option" id="option-{{ option }}" value="{{ option }}" required>{{ option }}
-        {% endfor %}
-
-        <br>
-
-        <input type="submit" value="Create quiz">
-    </form>
-{%endblock%}
+            <!-- Submit -->
+            <div class="submit-section">
+                <button type="submit" class="start-quiz-button">START QUIZ</button>
+            </div>
+        </form>
+    </div>
+    <script src="/static/customize.js"></script>
+</body>
+</html>
