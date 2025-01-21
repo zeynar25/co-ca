@@ -1,32 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block head %}
     <title>Guess the {{ mode }} of {{ category }}</title>
+    <link rel="stylesheet" href="/static/quiz_and_score_style.css">
     {% endblock %}
 </head>
+
 <body>
-    {%block body%}
-    <form action="/submit" method="POST">   
-        {% for question in questions %}
-            <p>{{ question.question }}</p>
-            
-            {% if option == "Identification" %}
-                <input type="text" name="{{ question.id }}" id="{{ question.id }}"><br>
-            {% else %}
-                {% for option in question.options %}
-                    <input type="radio" 
-                        id="question.id_option{{ loop.index }}" 
-                        name="{{ question.id }}" 
-                        value="{{ option }}">
-                    <label for="question.id_option{{ loop.index }}">{{ option }}</label><br>
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
-        <button type="submit">Submit</button>
-    </form>
-{%endblock%}
+    {% block body %}
+    <div class="navbar">
+        <div class="logo">
+            <img src="/static/logo.png" alt="">
+            <h1>Co-Ca</h1>
+        </div>
+        <div class="links">
+            <a href="">Play</a>
+            <a href="">Home</a>
+            <a href="">About</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <form action="/submit" method="POST">
+            <div class="carousel-container">
+                <div class="carousel">
+                    {% for question in questions %}
+                    <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                        <div class="card">
+                            <div class="card-header">
+                                <p>{{ question.question }}</p>
+                            </div>
+                            <div class="card-body">
+                                {% if option == "Identification" %}
+                                    <input type="text" name="{{ question.id }}" id="{{ question.id }}"><br>
+                                {% else %}
+                                    {% for option in question.options %}
+                                        <input type="radio" id="question.id_option{{ loop.index }}" name="{{ question.id }}" value="{{ option }}">
+                                        <label for="question.id_option{{ loop.index }}">{{ option }}</label><br>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="carousel-controls">
+                <button type="button" class="carousel-button" id="prevButton">Prev</button>
+                <button type="submit" class="submit-button">Submit</button>
+                <button type="button" class="carousel-button" id="nextButton">Next</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="/static/quiz_script.js"></script>
+    {% endblock %}
 </body>
+
 </html>
