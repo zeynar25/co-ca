@@ -27,6 +27,19 @@ def seconds_to_time(total_seconds):
     formatted_time = f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:05}"
     return formatted_time
 
+def get_month_name(month_number):
+    # List of month names
+    months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
+    
+    # Check if the input is valid
+    if 1 <= month_number <= 12:
+        return months[month_number - 1]
+    else:
+        return "Invalid month number. Please enter a number between 1 and 12."
+
 # Landing page: displays play and highscore button.
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -34,6 +47,9 @@ def index():
     modes = ["All", "Capital city", "Country"]
     categories = ["All", "Earth", "Asia", "Africa", "North America", "South America", "Europe", "Australia"]
     options = ["All", "True or False", "Multiple Choice", "Identification"]
+    
+    year = datetime.now().year
+    month = get_month_name(datetime.now().month)
 
     # When a filter is applied.
     if request.method == "POST":
@@ -151,7 +167,9 @@ def index():
             data=data, 
             modes=modes, 
             categories=categories, 
-            options=options
+            options=options,
+            month=month,
+            year=year
         )
 
     connection = sqlite3.connect("database.db")
@@ -195,7 +213,9 @@ def index():
         data=data, 
         modes=modes, 
         categories=categories, 
-        options=options
+        options=options,
+        month=month,
+        year=year
     )
 
 
