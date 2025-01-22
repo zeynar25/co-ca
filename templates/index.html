@@ -1,24 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    {% block head %}
+{% extends "layout.html" %}
+
+{% block head %}
     <title>Co-Ca</title>
     <link rel="stylesheet" href="/static/index_style.css">
-    {% endblock %}
-</head>
-<body>
-{%block body %}
-    <div class="navbar">
-        <div class="logo">
-            <img src="/static/logo.png" alt="">
-            <h1>Co-Ca</h1>
-        </div>
-        <div class="links">
-            <a href="">Play</a>
-            <a href="">Home</a>
-            <a href="">About</a>
-        </div>
-    </div>
+{% endblock %}
+
+{% block body %}
     <div class="main">
         <div class="text">
             <h1>Get familiar with the world!</h1>
@@ -32,6 +19,7 @@
         <h2 class="down">Top Rankers</h2>
         <a href="#target" class="down-arrow"><h1>↓</h1></a>
     </div>
+
     <div class="leaderboards">
         <h1 id="target">Top rankers</h1>
         <form action="/" method="POST">
@@ -138,7 +126,5 @@
                 </tr>
             {% endfor %}
         </table>
-        {% endblock %}
     </div>
-</body>
-</html>
+{% endblock %}
