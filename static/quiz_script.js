@@ -22,3 +22,45 @@ nextButton.addEventListener('click', () => {
         items[currentIndex].classList.add('active');
     }
 });
+
+
+// Disables prevButton at the first card, and nextButton at the last card
+document.addEventListener("DOMContentLoaded", function () {
+    const items = document.querySelectorAll(".carousel-item");
+    const prevButton = document.getElementById("prevButton");
+    const nextButton = document.getElementById("nextButton");
+
+    let currentIndex = 0;
+
+    function updateButtons() {
+        // Disable Prev button on the first card
+        prevButton.disabled = currentIndex === 0;
+
+        // Disable Next button on the last card
+        nextButton.disabled = currentIndex === items.length - 1;
+    }
+
+    function showCard(index) {
+        items.forEach((item, i) => {
+            item.classList.toggle("active", i === index);
+        });
+        currentIndex = index;
+        updateButtons();
+    }
+
+    // Event listeners for navigation
+    prevButton.addEventListener("click", () => {
+        if (currentIndex > 0) {
+            showCard(currentIndex - 1);
+        }
+    });
+
+    nextButton.addEventListener("click", () => {
+        if (currentIndex < items.length - 1) {
+            showCard(currentIndex + 1);
+        }
+    });
+
+    // Initialize carousel
+    showCard(currentIndex);
+});
