@@ -414,7 +414,7 @@ def check():
         answer = request.form.get(str(questions[i].id)) or "None"
         questions[i].answer = answer
 
-        if (questions[i].answer == questions[i].answer_key):
+        if (questions[i].answer.upper() == questions[i].answer_key.upper()):
             score += 1
 
     return render_template("score.html", mode=mode, category=category, option=option, score=score, duration=seconds_to_time(duration), questions=questions)

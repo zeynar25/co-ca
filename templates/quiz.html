@@ -24,12 +24,19 @@
                             </div>
                             <div class="card-body">
                                 {% if option == "Identification" %}
-                                    <input type="text" name="{{ question.id }}" id="{{ question.id }}"><br>
+                                <div class="identification-container">
+                                    <input type="text" class="identification-input" name="{{ question.id }}" id="{{ question.id }}" placeholder="Type your answer here">
+                                </div>
                                 {% else %}
-                                    {% for option in question.options %}
-                                        <input type="radio" id="question.id_option{{ loop.index }}" name="{{ question.id }}" value="{{ option }}">
-                                        <label for="question.id_option{{ loop.index }}">{{ option }}</label><br>
-                                    {% endfor %}
+                                    
+                                    <div class="buttons-group" id="mode-group">
+                                        {% for option in question.options %}
+                                            <label class="quiz-button">
+                                                <input type="radio" id="question.id_option{{ loop.index }}" name="{{ question.id }}" value="{{ option }}">
+                                                <span>{{ option }}</span>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>

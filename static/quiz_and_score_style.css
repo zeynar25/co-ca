@@ -83,3 +83,73 @@
     background-color: #cccccc;
     cursor: not-allowed;
 }
+
+/* identification part */
+.identification-container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin: 20px 0;
+}
+
+.identification-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.identification-input:focus {
+    border-color: #529EE0;
+    box-shadow: 0 0 5px rgba(82, 158, 224, 0.5);
+}
+
+.identification-input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* true or false and multiple choice part */
+.buttons-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.quiz-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    height: 40px;
+    background-color: #529EE0;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.quiz-button input {
+    display: none;
+}
+
+.quiz-button span {
+    pointer-events: none;
+}
+
+.quiz-button:hover {
+    transform: scale(1.05);
+    background-color: #2775b9;
+}
+
+.buttons-group .quiz-button.selected{
+    background-color: #113452;
+    border: 2px solid #2775b9;  
+}

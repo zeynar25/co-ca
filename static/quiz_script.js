@@ -64,3 +64,25 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize carousel
     showCard(currentIndex);
 });
+
+
+// adds/removes selected class to a button
+document.addEventListener("DOMContentLoaded", () => {
+    // Select all quiz buttons
+    const quizButtons = document.querySelectorAll(".quiz-button");
+
+    quizButtons.forEach(button => {
+        // Add a click event listener to each button
+        button.addEventListener("click", () => {
+            // Find all radio inputs within this button group
+            const parentGroup = button.parentElement;
+            const buttonsInGroup = parentGroup.querySelectorAll(".quiz-button");
+
+            // Remove "selected" class from all buttons in the group
+            buttonsInGroup.forEach(b => b.classList.remove("selected"));
+
+            // Add "selected" class to the clicked button
+            button.classList.add("selected");
+        });
+    });
+});
