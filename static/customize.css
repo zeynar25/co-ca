@@ -1,38 +1,27 @@
-/* General styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    height: 100vh;
-    background-image: url(Background.png);
-    background-size: cover;
+.main-container{
     display: flex;
     justify-content: center;
-    align-items: center;
-    flex-direction: column;
-
-
 }
 
 .container {
     background-color: #fff;
-    width: 400px;
-    padding: 20px;
+    max-width: 400px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
+    margin-top: 10px;
 }
 
-h1 {
-    font-size: 24px;
+.container h1 {
+    font-size: 22px;
     margin-bottom: 20px;
     color: #529EE0;
 }
 
 /* Section styles */
 .section {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .section p {
@@ -78,9 +67,9 @@ h1 {
     background-color: #2775b9;
 }
 
-.quiz-button input:checked + span {
-    background-color: #529EE0;
-    font-weight: bold;
+.buttons-group .selected{
+    background-color: #113452;
+    border: 2px solid #2775b9;  
 }
 
 /* Submit button */
@@ -102,12 +91,4 @@ h1 {
 
 .start-quiz-button:hover {
     background-color: #2775b9;
-}
-
-.LOGO{
-    display: flex;
-}
-
-.cocaLogo{
-    width: 100px;
 }
