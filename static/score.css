@@ -169,3 +169,14 @@
     font-weight: bold;
     color: #529EE0;
 }
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column; 
+        align-items: center; 
+    }
+
+    .result-panel, .quiz-results {
+        width: 100%; 
+    }
+}
