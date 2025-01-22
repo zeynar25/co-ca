@@ -32,7 +32,7 @@ class Question(Country):
 
     @property
     def state(self):
-        return self.__correct
+        return self.__state
 
     @state.setter
     def state(self, state):
