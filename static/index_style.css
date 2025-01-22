@@ -81,6 +81,7 @@ form {
     justify-content: center;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
 }
@@ -139,4 +140,21 @@ table tr:hover {
 
 table td {
     color: #555555;
+}
+
+.table-container {
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; 
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    form {
+        gap: 20px;
+    }
+
+    form select,
+    form input[type="submit"] {
+        min-width: 120px; 
+    }
 }

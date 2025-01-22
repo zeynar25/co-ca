@@ -48,83 +48,91 @@
         </form>
 
         <h4>All-Time Top 100</h4>
-        <table>
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Score</th>
-                <th>Duration</th>
-                <th>Date</th>
-            </tr>
-            {% for player in ranker_all %}
+        <div class="table-container">
+            <table>
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ player.user }}</td>
-                    <td>{{ player.score }}</td>
-                    <td>{{ player.duration }}</td>
-                    <td>{{ player.record_date }}</td>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Duration</th>
+                    <th>Date</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for player in ranker_all %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ player.user }}</td>
+                        <td>{{ player.score }}</td>
+                        <td>{{ player.duration }}</td>
+                        <td>{{ player.record_date }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
 
         <h4>{{ year }}'s Top 50</h4>
-        <table>
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Score</th>
-                <th>Duration</th>
-                <th>Date</th>
-            </tr>
-            {% for player in ranker_annually %}
+        <div class="table-container">
+            <table>
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ player.user }}</td>
-                    <td>{{ player.score }}</td>
-                    <td>{{ player.duration }}</td>
-                    <td>{{ player.record_date }}</td>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Duration</th>
+                    <th>Date</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for player in ranker_annually %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ player.user }}</td>
+                        <td>{{ player.score }}</td>
+                        <td>{{ player.duration }}</td>
+                        <td>{{ player.record_date }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
 
         <h4>{{ month }}'s Top 25</h4>
-        <table>
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Score</th>
-                <th>Duration</th>
-                <th>Date</th>
-            </tr>
-            {% for player in ranker_monthly %}
+        <div class="table-container">
+            <table>
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ player.user }}</td>
-                    <td>{{ player.score }}</td>
-                    <td>{{ player.duration }}</td>
-                    <td>{{ player.record_date }}</td>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Duration</th>
+                    <th>Date</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for player in ranker_monthly %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ player.user }}</td>
+                        <td>{{ player.score }}</td>
+                        <td>{{ player.duration }}</td>
+                        <td>{{ player.record_date }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
 
         <h4>Weekly Top 10</h4>
-        <table>
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Score</th>
-                <th>Duration</th>
-                <th>Date</th>
-            </tr>
-            {% for player in ranker_weekly %}
+        <div class="table-container">
+            <table>
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ player.user }}</td>
-                    <td>{{ player.score }}</td>
-                    <td>{{ player.duration }}</td>
-                    <td>{{ player.record_date }}</td>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Duration</th>
+                    <th>Date</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for player in ranker_weekly %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ player.user }}</td>
+                        <td>{{ player.score }}</td>
+                        <td>{{ player.duration }}</td>
+                        <td>{{ player.record_date }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 {% endblock %}
