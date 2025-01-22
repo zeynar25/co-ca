@@ -31,64 +31,62 @@
             </div>
         </div>
         
-        <div class="quiz-results">
-            <div class="main">
-                <div class="carousel-container">
-                    <div class="carousel">
-                        {% for question in questions %}
-                        <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
-                            <div class="card">
-                                <div class="card-header">
-                                    <p>{{ loop.index}}. {{ question.question }}</p>
-                                </div>
-                                <div class="card-body">
-                                    {% if option == "Identification" %}
-                                    <div class="identification-container">
-                                        {% if question.state == True %}
-                                            <div><span class="answer"></span></div>
-                                            <div><b>Your Answer:</b> <span class = "answer correct-answer">{{ question.answer }}</span></div>
-                                        {% else %}
-                                            <div><b>Your Answer:<b> <span class = "answer incorrect-answer">{{ question.answer }}</span></div>
-                                            <div><b>Correct Answer:<b> <span class = "answer correct-answer">{{ question.answer_key }}</span></div>
-                                        {% endif %}
-                                    </div>
+        <div class="main">
+            <div class="carousel-container">
+                <div class="carousel">
+                    {% for question in questions %}
+                    <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                        <div class="card">
+                            <div class="card-header">
+                                <p>{{ loop.index}}. {{ question.question }}</p>
+                            </div>
+                            <div class="card-body">
+                                {% if option == "Identification" %}
+                                <div class="identification-container">
+                                    {% if question.state == True %}
+                                        <div><span class="answer"></span></div>
+                                        <div><b>Your Answer:</b> <span class = "answer correct-answer">{{ question.answer }}</span></div>
                                     {% else %}
-                                        
-                                        <div class="answers-group" id="mode-group">
-                                            {% for option in question.options %}
-                                                {% if question.answer != "None" and option == question.answer_key %}
-                                                    <p class="answer correct-answer"> 
-                                                        {{ option }}
-                                                    </p>
-
-                                                {% elif question.answer == "None" and option == question.answer_key %}
-                                                    <p class="answer no-answer"> 
-                                                        {{ option }}
-                                                    </p>
-
-                                                {% elif question.state == False and option == question.answer %}
-                                                    <p class="answer incorrect-answer"> 
-                                                        {{ option }}
-                                                    </p>
-                                                {% else %}
-                                                    <p class="answer"> 
-                                                        {{ option }}
-                                                    </p>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
+                                        <div><b>Your Answer:<b> <span class = "answer incorrect-answer">{{ question.answer }}</span></div>
+                                        <div><b>Correct Answer:<b> <span class = "answer correct-answer">{{ question.answer_key }}</span></div>
                                     {% endif %}
                                 </div>
+                                {% else %}
+                                    
+                                    <div class="answers-group" id="mode-group">
+                                        {% for option in question.options %}
+                                            {% if question.answer != "None" and option == question.answer_key %}
+                                                <p class="answer correct-answer"> 
+                                                    {{ option }}
+                                                </p>
+
+                                            {% elif question.answer == "None" and option == question.answer_key %}
+                                                <p class="answer no-answer"> 
+                                                    {{ option }}
+                                                </p>
+
+                                            {% elif question.state == False and option == question.answer %}
+                                                <p class="answer incorrect-answer"> 
+                                                    {{ option }}
+                                                </p>
+                                            {% else %}
+                                                <p class="answer"> 
+                                                    {{ option }}
+                                                </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
                     </div>
+                    {% endfor %}
                 </div>
+            </div>
 
-                <div class="carousel-controls">
-                    <button type="button" class="carousel-button" id="prevButton">Prev</button>
-                    <button type="button" class="carousel-button" id="nextButton">Next</button>
-                </div>
+            <div class="carousel-controls">
+                <button type="button" class="carousel-button" id="prevButton">Prev</button>
+                <button type="button" class="carousel-button" id="nextButton">Next</button>
             </div>
         </div>
     </div>
