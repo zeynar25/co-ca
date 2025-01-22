@@ -6,6 +6,7 @@ class Question(Country):
         self.__question = question
         self.__answer_key = answer_key
         self.__answer = None
+        self.__state = False
             
     @property
     def question(self):
@@ -28,6 +29,17 @@ class Question(Country):
             self.__answer_key = answer
         else:
             raise ValueError("answer must be a string")
+
+    @property
+    def state(self):
+        return self.__correct
+
+    @state.setter
+    def state(self, state):
+        if isinstance(state, bool):
+            self.__state = state
+        else:
+            raise ValueError("answer must be boolean")
 
     @property
     def answer(self):

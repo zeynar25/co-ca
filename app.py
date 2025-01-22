@@ -416,6 +416,7 @@ def check():
 
         if (questions[i].answer.upper() == questions[i].answer_key.upper()):
             score += 1
+            questions[i].state = True
 
     return render_template("score.html", mode=mode, category=category, option=option, score=score, duration=seconds_to_time(duration), questions=questions)
 
