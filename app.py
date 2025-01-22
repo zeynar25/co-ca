@@ -459,5 +459,9 @@ def upload():
 
     return redirect("/")
 
+@app.route("/about", methods=["GET"])
+def about():
+    return "About page"
+
 if __name__ == "__main__":
     app.run(debug=True)
