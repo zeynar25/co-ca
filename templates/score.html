@@ -1,57 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Results</title>
-    <link rel="stylesheet" href="/static/score.css">
-</head>
-<body>
-    <div class = "LOGO">
-        <img class = "cocaLogo"src = "/static/logo.png">
-    </div>
+{% extends "layout.html" %}
 
-    <div class="container">
-        <!-- Left Panel -->
-        <div class="left-panel">
-            <h1>Congrats! Quiz Finished</h1>
+{% block head %}
+    <title>Quiz Results</title>
+    <link rel="stylesheet" href="/static/quiz_and_score_style.css">
+    <link rel="stylesheet" href="/static/score.css">
+{% endblock %}
+
+{% block body %}
+    <div class="main-container">
+        <div class="quiz-results">
+            <div class="main">
+                <div class="carousel-container">
+                    <div class="carousel">
+                        {% for question in questions %}
+                        <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                            <div class="card">
+                                <div class="card-header">
+                                    <p>{{ loop.index}}. {{ question.question }}</p>
+                                </div>
+                                <div class="card-body">
+                                    {% if option == "Identification" %}
+                                    <div class="identification-container">
+                                        {% if question.state == True %}
+                                            <div><span class="answer"></span></div>
+                                            <div><b>Your Answer:</b> <span class = "answer correct-answer">{{ question.answer }}</span></div>
+                                        {% else %}
+                                            <div><b>Your Answer:<b> <span class = "answer incorrect-answer">{{ question.answer }}</span></div>
+                                            <div><b>Correct Answer:<b> <span class = "answer correct-answer">{{ question.answer_key }}</span></div>
+                                        {% endif %}
+                                    </div>
+                                    {% else %}
+                                        
+                                        <div class="answers-group" id="mode-group">
+                                            {% for option in question.options %}
+                                                {% if question.answer != "None" and option == question.answer_key %}
+                                                    <p class="answer correct-answer"> 
+                                                        {{ option }}
+                                                    </p>
+
+                                                {% elif question.answer == "None" and option == question.answer_key %}
+                                                    <p class="answer no-answer"> 
+                                                        {{ option }}
+                                                    </p>
+
+                                                {% elif question.state == False and option == question.answer %}
+                                                    <p class="answer incorrect-answer"> 
+                                                        {{ option }}
+                                                    </p>
+                                                {% else %}
+                                                    <p class="answer"> 
+                                                        {{ option }}
+                                                    </p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="carousel-controls">
+                    <button type="button" class="carousel-button" id="prevButton">Prev</button>
+                    <button type="button" class="carousel-button" id="nextButton">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-panel">
+            <h1 id="result-title">Congrats! Quiz Finished</h1>
             <p>Your Score:</p>
             <div class="score" id="score-percentage" data-score="{{ score }}" data-total="10"></div>
-            <div class="progress-bar">
-                <div class="progress-bar-fill"></div>
-            </div>
-            <button onclick="window.location.href='/'">Home</button>
-            <button onclick="window.location.href='/customize'">Restart Quiz</button>
+            <div class="progress-circle">
+                <div class="circle">
+                    <div class="inner-circle">
+                        <span id="percentage-text">0%</span>
+                    </div>
+                </div>
+            </div>            
         
             <!-- Upload Form -->
             <div class="upload-form">
                 <form action="/upload" method="POST">
-                    <label for="username">Enter your name:</label>
+                    <label for="username"><b>Enter your name:</b></label>
                     <input type="text" name="username" id="username" value="anonymous">
                     <input type="hidden" name="score" value="{{ score }}">
                     <button type="submit">Upload</button>
                 </form>
             </div>
         </div>
-
-        <!-- Right Panel -->
-        <div class="right-panel">
-            <h2>Your Answers:</h2>
-            <ul>
-                {% for question in questions %}
-                <li class="{{ 'correct' if question.answer == question.answer_key else 'incorrect' }}">
-                    {{ question.question }}
-                    <ul>
-                        <li>Your Answer: {{ question.answer }}</li>
-                        {% if question.answer != question.answer_key %}
-                        <li>Correct Answer: {{ question.answer_key }}</li>
-                        {% endif %}
-                    </ul>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
     </div>
+
+    <script src="/static/quiz_script.js"></script>
     <script src="/static/score.js"></script>
-</body>
-</html>
+{% endblock %}

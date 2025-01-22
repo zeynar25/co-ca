@@ -1,60 +1,87 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-image: url(Background.png);
-    background-size: cover;
-}
-
-.container {
+.main-container{
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
+    height: 80%;
 }
 
-.left-panel, .right-panel {
-    width: 48%;
+.main{
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-results{
+    margin: auto;
+    
+}
+
+.answer{
+    width: 100px;
+    padding: 5px;
+    text-align: center;
+    border-radius: 5px;
+}
+.correct-answer, .answers-group .answer.correct-answer{
+    color: white;
+    background-color: green;
+}
+
+.incorrect-answer, .answers-group .answer.no-answer{
+    background-color: rgb(194, 194, 22);
+}
+
+.incorrect-answer, .answers-group .answer.incorrect-answer{
+    color: white;
+    background-color: rgb(216, 30, 30);
+}
+
+.identification-container{
+    align-items: center;
+    gap: 20px;
+}
+
+.answers-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.answers-group .answer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    height: 40px;
+    background-color: #529EE0;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.result-panel {
+    width: 35%;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-}
-
-.left-panel {
+    margin: auto;
     text-align: center;
+    margin-top: 20px;
 }
 
-h1 {
+.result-panel h1 {
     color: #333;
 }
 
-.progress-bar {
-    background-color: #ddd;
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-    height: 20px;
-    margin: 20px 0;
-}
-
-.progress-bar-fill {
-    background-color: #529EE0 ;
-    height: 100%;
-    width: 0;
-    transition: width 0.5s ease-in-out;
-    text-align: center;
-    color: white;
-    font-weight: bold;
-    line-height: 20px;
-}
-
-.score {
+.result-panel .score {
     font-size: 2em;
     margin: 10px 0;
     color: #529EE0 ;
 }
 
-button {
+.result-panel button {
     margin: 10px 5px;
     padding: 10px 15px;
     font-size: 16px;
@@ -65,48 +92,8 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.result-panel button:hover {
     background-color: #2775b9;
-}
-
-.right-panel ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.correct {
-    background-color: #529EE0;
-    color: white;
-    padding: 5px 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-}
-
-.incorrect {
-    background-color: #f44336;
-    color: white;
-    padding: 5px 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-}
-
-.neutral {
-    background-color: black;
-    color: white;
-    padding: 5px 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-}
-
-.cocaLogo {
-    width: 100px;
-}
-
-.LOGO {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
 }
 
 .upload-form {
@@ -122,11 +109,11 @@ button:hover {
 }
 
 .upload-form input[type="text"] {
-    width: 80%;
+    width: 50%;
     padding: 10px;
     font-size: 14px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #8abae4;
     border-radius: 5px;
 }
 
@@ -142,4 +129,41 @@ button:hover {
 
 .upload-form button:hover {
     background-color: #2775b9;
+}
+
+.progress-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    background: conic-gradient(#529EE0 0%, #ddd 0%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inner-circle {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.inner-circle span {
+    position: relative;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #529EE0;
 }
