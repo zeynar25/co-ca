@@ -8,6 +8,29 @@
 
 {% block body %}
     <div class="main-container">
+        <div class="result-panel">
+            <h1 id="result-title">Congrats! Quiz Finished</h1>
+            <p>Your Score:</p>
+            <div class="score" id="score-percentage" data-score="{{ score }}" data-total="10"></div>
+            <div class="progress-circle">
+                <div class="circle">
+                    <div class="inner-circle">
+                        <span id="percentage-text">0%</span>
+                    </div>
+                </div>
+            </div>            
+        
+            <!-- Upload Form -->
+            <div class="upload-form">
+                <form action="/upload" method="POST">
+                    <label for="username"><b>Enter your name:</b></label>
+                    <input type="text" name="username" id="username" value="anonymous">
+                    <input type="hidden" name="score" value="{{ score }}">
+                    <button type="submit">Upload</button>
+                </form>
+            </div>
+        </div>
+        
         <div class="quiz-results">
             <div class="main">
                 <div class="carousel-container">
@@ -66,29 +89,6 @@
                     <button type="button" class="carousel-button" id="prevButton">Prev</button>
                     <button type="button" class="carousel-button" id="nextButton">Next</button>
                 </div>
-            </div>
-        </div>
-
-        <div class="result-panel">
-            <h1 id="result-title">Congrats! Quiz Finished</h1>
-            <p>Your Score:</p>
-            <div class="score" id="score-percentage" data-score="{{ score }}" data-total="10"></div>
-            <div class="progress-circle">
-                <div class="circle">
-                    <div class="inner-circle">
-                        <span id="percentage-text">0%</span>
-                    </div>
-                </div>
-            </div>            
-        
-            <!-- Upload Form -->
-            <div class="upload-form">
-                <form action="/upload" method="POST">
-                    <label for="username"><b>Enter your name:</b></label>
-                    <input type="text" name="username" id="username" value="anonymous">
-                    <input type="hidden" name="score" value="{{ score }}">
-                    <button type="submit">Upload</button>
-                </form>
             </div>
         </div>
     </div>

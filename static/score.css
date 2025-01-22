@@ -1,16 +1,13 @@
 .main-container{
     display: flex;
-    height: 80%;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .main{
     display: flex;
     flex-direction: column;
-}
-
-.quiz-results{
-    margin: auto;
-    
+    margin-bottom: 20px;
 }
 
 .answer{
