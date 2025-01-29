@@ -36,7 +36,7 @@ Co-Ca (short for Country-Capital) is a project created to challenge users with a
 
     2. Install Python (if not installed yet)
         - Download and install Python from python.org.
-    2. Install Dependencies
+    3. Install Dependencies
         Ensure you have Flask installed:
             pip install flask
         Verify Installation:
